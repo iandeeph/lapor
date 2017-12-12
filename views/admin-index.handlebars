@@ -1,0 +1,103 @@
+{{#section 'title'}}
+    Home- Portal IT Cermati
+{{/section}}
+{{error}}
+
+<div class="row almost-full">
+    <div class="col s12 mt-20">
+        <div class="row">
+            <div class="col s12">
+                <div class="row">
+                    <div class="col s12 center">
+                        <span class="font-40">Daftar Antrian</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 scrollable-80">
+                        <ul class="collapsible popout" data-collapsible="accordion">
+                            {{#each layoutTemplate}}
+                                <li>
+                                    <div class="collapsible-header">
+                                        <i class="circle">{{noAntrian}}</i>{{nama}} ({{divisi}}) - {{jenis}}
+                                    </div>
+                                    <div class="collapsible-body">
+                                        <p>Tanggal Buat : {{dateTime tanggalBuat}}</p>
+                                        <p>{{breakLine detail}}</p>
+                                        <p class="divider"></p>
+                                        <div class="mb-30">
+                                            <form action="" method="post">
+                                                <input type="hidden" value="{{idLaporan}}" name="idKerjakan"/>
+                                                <input type="submit" value="kerjakan" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10"/>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col s12">
+                <div class="col s12">
+                    <div class="col s12 center">
+                        <span class="font-40">Yang Sedang Dikerjakan</span>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s12 mt-30">
+                        {{#each layoutPekerja}}
+                            <div class="col s12">
+                                <div class="col s12">
+                                    <span class="font-20 bold">{{@key}}</span>
+                                </div>
+                                <div class="col s12 scrollable-80">
+                                    <ul class="collapsible popout" data-collapsible="accordion">
+                                        {{#each this}}
+                                            <li>
+                                                <div class="collapsible-header">
+                                                    <i class="circle">{{noAntrian}}</i> {{nama}} ({{divisi}}) - {{jenis}}
+                                                </div>
+                                                <div class="collapsible-body">
+                                                    <p>Tanggal Request : {{dateTime tanggalBuat}}</p>
+                                                    <p>Status : {{status}}</p>
+                                                    <p>{{breakLine detail}}</p>
+                                                    <p class="divider"></p>
+                                                    <div class="mb-30">
+                                                        <form action="" method="post">
+                                                            <input type="hidden" value="{{idLaporan}}" name="idAssign"/>
+                                                            <input type="submit" value="selesai" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10"/>
+                                                            <a value="update" class="waves-effect waves-light blue darken-3 right ml-10 btn modal-trigger" href="#modalUpdate{{idLaporan}}">Update Status</a>
+
+                                                            <!-- Modal Structure -->
+                                                            <div id="modalUpdate{{idLaporan}}" class="modal">
+                                                                <div class="modal-content">
+                                                                    <div class="file-field input-field col s12 mb-10">
+                                                                        <span class="font-20 bold">Update Status</span>
+                                                                    </div>
+                                                                    <div class="file-field input-field col s12 mt-10">
+                                                                        <input id="laporStatus" name="laporStatus" type="text" class="validate" value="{{status}}" required>
+                                                                        <label for="laporStatus">Divisi</label>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="modal-footer">
+                                                                    <input type="submit" value="update" name="laporsubmit" id="{{idLaporan}}" class="mb-10 waves-effect waves-light btn blue darken-3 right ml-10"/>
+                                                                    <a href="#!" class=" mb-10 modal-action modal-close waves-effect waves-light blue darken-3 right ml-10 btn">Batal</a>
+                                                                </div>
+                                                            </div>
+                                                        </form>
+                                                    </div>
+                                                </div>
+                                            </li>
+                                        {{/each}}
+                                    </ul>
+                                </div>
+                            </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,25 @@
+{
+  "name": "lapor",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.1",
+    "body-parser": "~1.18.2",
+    "cookie-parser": "~1.4.3",
+    "crypto": "^1.0.1",
+    "debug": "~2.6.9",
+    "express": "~4.15.5",
+    "express-handlebars": "^3.0.0",
+    "express-session": "^1.15.6",
+    "handlebars": "^4.0.11",
+    "hbs": "~4.0.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.19.3",
+    "morgan": "~1.9.0",
+    "promise-mysql": "^3.1.3",
+    "serve-favicon": "~2.4.5"
+  }
+}

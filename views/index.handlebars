@@ -1,0 +1,60 @@
+{{#section 'title'}}
+    Home- Portal IT Cermati
+{{/section}}
+{{error}}
+
+<div class="row almost-full">
+    <div class="col s12 mt-20">
+        <div class="col s12 m6 l4">
+            <div class="row">
+                <div class="col s12 center">
+                    <span class="font-40">Daftar Antrian Hari Ini</span>
+                </div>
+                <div class="col s12 center">
+                    <a class="btn-floating btn-large waves-effect waves-light white-text light-green" title="Tambah Antrian" href="/lapor"><i class="material-icons">add</i></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col s12 scrollable-80">
+                    <ul class="collection">
+                        {{#each layoutTemplate}}
+                            <li class="collection-item avatar">
+                                <i class="circle">{{noAntrian}}</i>
+                                <span class="title">{{jenis}}</span>
+                                <p>{{dateTime tanggalBuat}}</p>
+                                <p>{{nama}} - {{divisi}}</p>
+                            </li>
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m6 l8">
+            <div class="row">
+                <div class="col s12 center">
+                    <span class="font-40">Yang Sedang Dikerjakan</span>
+                </div>
+            </div>
+            <div class="row">
+                {{#each layoutPekerja}}
+                    <div class="col s12">
+                        <span class="font-20 bold">{{@key}}</span>
+                    </div>
+                    <div class="col s12 scrollable-20">
+                        <ul class="collection">
+                            {{#each this}}
+                                <li class="collection-item avatar">
+                                    <i class="circle">{{this.noAntrian}}</i>
+                                    <span class="title">{{jenis}}</span>
+                                    <p>{{dateTime tanggalBuat}}</p>
+                                    <p>{{nama}} - {{divisi}}</p>
+                                    <span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>
+                                </li>
+                            {{/each}}
+                        </ul>
+                    </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>

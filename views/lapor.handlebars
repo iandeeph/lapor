@@ -1,0 +1,47 @@
+{{#section 'title'}}
+    Lapor - Portal IT Cermati
+{{/section}}
+{{error}}
+
+<div class="row container">
+    <form action="" method="post">
+        <div class="col s12 mt-20">
+            <div class="col s12 mb-30">
+                <span class="font-40">Buat Permintaan</span>
+            </div>
+            <div class="input-field col s12">
+                <select id="laporjenis" name="lapor[jenis]" required>
+                    <option value="" disabled selected>Pilih Jenis Laporan</option>
+                    <option value="Permintaan Perlengkapan Anak Baru">Permintaan Perlengkapan Anak Baru</option>
+                    <option value="Informasi Anak Resign">Informasi Anak Resign</option>
+                    <option value="Permintaan Pergantian Perangkat (mouse rusak, laptop error, dll)">Permintaan Pergantian Perangkat (mouse rusak, laptop error, dll)</option>
+                    <option value="Setting printer">Setting printer</option>
+                    <option value="Akses Login (portal, zoho, dll)">Akses Login (portal, zoho, dll)</option>
+                    <option value="Tambah Aplikasi">Tambah Aplikasi</option>
+                    <option value="Troubleshoot/Perangkat Error (Laptop, Mouse, Headset)">Troubleshoot/Perangkat Error (Laptop, Mouse, Headset)</option>
+                    <option value="Masalah Telepon">Masalah Telepon</option>
+                    <option value="Lainnya..">Lainnya..</option>
+                </select>
+                <label>Jenis Laporan</label>
+            </div>
+            <div class="file-field input-field col s12 m6 l6">
+                <input id="laporname" name="lapor[nama]" type="text" class="validate" required>
+                <label for="laporname0">Nama</label>
+            </div>
+            <div class="file-field input-field col s12 m6 l6">
+                <input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" required>
+                <label for="lapordivisi">Divisi</label>
+            </div>
+            <div class="input-field col s12">
+                <textarea id="lapordetail" name="lapor[detail]" class="materialize-textarea"></textarea>
+                <label for="lapordetail">Detail Permintaan</label>
+            </div>
+            <div class="input-field col s12 mb-20">
+                <input type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10"></input>
+            </div>
+            <div class="col s12">
+                <span class="font-20 green-text" id="message">{{message}}</span>
+            </div>
+        </div>
+    </form>
+</div>

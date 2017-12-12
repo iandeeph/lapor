@@ -1,0 +1,42 @@
+{{#section 'title'}}
+    Login Page - Single Portal Cermati
+{{/section}}
+{{error}}
+<div class="row">
+    <div class="container">
+        <div class="col offset-m2 offset-l3 s12 m8 l6">
+            <div class="col s12 z-depth-1 login-box mt-30">
+                <div class="row">
+                    <form class="col s12" action="" method="post">
+                        <div class="row">
+                            <div class="col s12 mt-20 font-40 center-align">
+                                <span>LOGIN</span>
+                            </div>
+                            <div class="divider">
+
+                            </div>
+                            <div class="input-field col s12 left">
+                                <i class="material-icons prefix">account_circle</i>
+                                <input id="login_username" name="login_username" type="text" class="validate">
+                                <label for="login_username">Username</label>
+                            </div>
+                            <div class="input-field col s12 left">
+                                <i class="material-icons prefix">vpn_key</i>
+                                <input id="login_password" name="login_password" type="password" class="validate">
+                                <label for="login_password">Password</label>
+                            </div>
+                            <div class="col s12">
+                                <button class="btn-large btn-flat white-text waves-effect waves-light blue right" type="submit" name="action">Submit
+                                    <i class="material-icons right">send</i>
+                                </button>
+                            </div>
+                            <div class="col s12">
+                                <span class="font-20 green-text" id="message">{{message}}</span>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
