@@ -5,8 +5,6 @@ var mysql       = require('promise-mysql');
 var Promise     = require('bluebird');
 var moment      = require('moment');
 
-var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
-
 //source : http://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
 var db_config = {
     host         : '1.1.1.200',
@@ -44,6 +42,9 @@ handleDisconnect();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+    var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
+    var dateNowStart = moment().format("YYYY-MM-DD 00:00:00");
+    var dateNowEnd = moment().format("YYYY-MM-DD 23:59:59");
     var layoutAntrian = [];
     var layoutPekerja = {};
     laporanConn.query("select * from laporan order by noantrian")
@@ -61,7 +62,8 @@ router.get('/', function(req, res, next) {
                         "jenis": result[key].jenis,
                         "nama":result[key].nama,
                         "divisi":result[key].divisi,
-                        "tanggalBuat":result[key].tanggalBuat};
+                        "tanggalBuat":result[key].tanggalBuat,
+                        "detail":result[key].detail};
                 });
 
                 return Promise.all(layoutAntrian)
@@ -81,10 +83,12 @@ router.get('/', function(req, res, next) {
                                         layoutPekerja[rowAssign[0].nama] = {};
                                     }).then(function(){
                                         var arrNoAntrian = _.toArray(resultPekerja);
+                                        //console.log(resultPekerja);
                                         return Promise.each(arrNoAntrian, function (rowNoAntrian) {
                                             layoutPekerja[rowNoAntrian.assign][rowNoAntrian.noantrian] = {};
                                         }).then(function(){
                                             var arrPekerja = _.toArray(resultPekerja);
+                                            //console.log(resultPekerja);
                                             return Promise.each(arrPekerja, function (rowPekerja){
                                                 layoutPekerja[rowPekerja.assign][rowPekerja.noantrian] = {
                                                     "noAntrian" : rowPekerja.noantrian,
@@ -93,14 +97,44 @@ router.get('/', function(req, res, next) {
                                                     "divisi":rowPekerja.divisi,
                                                     "tanggalBuat":rowPekerja.tanggalBuat,
                                                     "assign":rowPekerja.assign,
-                                                    "status":rowPekerja.status
+                                                    "status":rowPekerja.status,
+                                                    "detail":rowPekerja.detail,
+                                                    "catatan":rowPekerja.catatan
                                                 };
                                             }).then(function(b){
-                                                console.log(layoutPekerja);
-                                                res.render('index', {
-                                                    layoutTemplate: a,
-                                                    layoutPekerja: layoutPekerja
-                                                });
+                                                var layoutWorkflow = {};
+                                                var timelineQry= "SELECT *, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated FROM laporan WHERE tanggalSelesai between '"+dateNowStart+"' AND '"+dateNowEnd+"' AND status = 'Done' AND resolve ='TRUE' ORDER BY tanggalSelesai DESC ";
+                                                //console.log(timelineQry);
+                                                laporanConn.query(timelineQry)
+                                                    .then(function(timelineResQry) {
+                                                        var groupedDate = _.groupBy(timelineResQry, 'doneDateFormated');
+                                                        var arrGrpDate = _.toArray(groupedDate);
+                                                        return Promise.each(arrGrpDate, function (rowDate){
+                                                            layoutWorkflow[rowDate[0].doneDateFormated] = [];
+                                                        }).then(function(){
+                                                            var arrResult = _.toArray(timelineResQry);
+                                                            return Promise.each(arrResult, function (rowTimeline) {
+                                                                layoutWorkflow[rowTimeline.doneDateFormated].push({
+                                                                    "tanggalSelesai" : rowTimeline.tanggalSelesai,
+                                                                    "jenis": rowTimeline.jenis,
+                                                                    "nama":rowTimeline.nama,
+                                                                    "divisi":rowTimeline.divisi,
+                                                                    "tanggalBuat":rowTimeline.tanggalBuat,
+                                                                    "assign":rowTimeline.assign,
+                                                                    "status":rowTimeline.status,
+                                                                    "idLaporan":rowTimeline.idlaporan,
+                                                                    "detail":rowTimeline.detail
+                                                                });
+                                                            }).then(function(){
+                                                                //console.log(layoutPekerja);
+                                                                res.render('index', {
+                                                                    layoutTemplate: a,
+                                                                    layoutPekerja: layoutPekerja,
+                                                                    layoutWorkFlow: layoutWorkflow
+                                                                });
+                                                            });
+                                                        });
+                                                    });
                                             })
 
                                         });
@@ -140,11 +174,14 @@ router.get('/lapor', function(req, res, next) {
 
 /* POST lapor page. */
 router.post('/lapor', function(req, res, next) {
+    var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
+    var dateNowStart = moment().format("YYYY-MM-DD 00:00:00");
+    var dateNowEnd = moment().format("YYYY-MM-DD 23:59:59");
     var arrayQueryValue = [];
 
     var postInputData = req.body.lapor || {};
 
-    laporanConn.query("select max(noantrian) noantrian from laporan limit 1")
+    laporanConn.query("select max(noantrian) noantrian from laporan where resolve = 'FALSE' AND status != 'Done' limit 1")
         .then(function(result) {
             var nama = postInputData.nama;
             var divisi = postInputData.divisi;

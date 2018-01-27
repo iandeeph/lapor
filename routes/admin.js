@@ -5,7 +5,7 @@ var mysql       = require('promise-mysql');
 var Promise     = require('bluebird');
 var moment      = require('moment');
 
-var dateNow = moment(Date.now()).format("YYYY-MM-DD HH:mm:ss");
+var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
 
 //source : http://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
 var db_config = {
@@ -44,12 +44,16 @@ handleDisconnect();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+    var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
     if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
         console.log("Not Logged");
         res.redirect('/portal-auth');
     }else {
         var layoutAntrian = [];
         var layoutPekerja = {};
+        var loginUser = req.session.name;
+        var privUser = req.session.priv;
+        var classification;
         laporanConn.query("SELECT * FROM laporan ORDER BY noantrian")
             .then(function (result) {
                 //console.log(result);
@@ -60,6 +64,15 @@ router.get('/', function(req, res, next) {
                 resultPromise.then(function(antrianItem) {
                     //console.log(antrianItem);
                     Object.keys(antrianItem).forEach(function (key) {
+                        if((antrianItem[key].jenis == "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis == "Informasi Anak Resign") && privUser == "2"){
+                            classification = "1";
+                        }else if((antrianItem[key].jenis == "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis == "Informasi Anak Resign") && privUser == "1"){
+                            classification = "3";
+                        }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "2"){
+                            classification = "3";
+                        }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "1"){
+                            classification = "2";
+                        }
                         layoutAntrian[key] = {
                             "noAntrian": antrianItem[key].noantrian,
                             "jenis": antrianItem[key].jenis,
@@ -67,7 +80,8 @@ router.get('/', function(req, res, next) {
                             "divisi": antrianItem[key].divisi,
                             "tanggalBuat": antrianItem[key].tanggalBuat,
                             "detail" : antrianItem[key].detail,
-                            "idLaporan" : antrianItem[key].idlaporan
+                            "idLaporan" : antrianItem[key].idlaporan,
+                            "classification" : classification
                         };
                     });
 
@@ -100,9 +114,11 @@ router.get('/', function(req, res, next) {
                                                         "divisi":rowPekerja.divisi,
                                                         "tanggalBuat":rowPekerja.tanggalBuat,
                                                         "assign":rowPekerja.assign,
+                                                        "catatan":rowPekerja.catatan,
                                                         "status":rowPekerja.status,
                                                         "idLaporan":rowPekerja.idlaporan,
-                                                        "detail":rowPekerja.detail
+                                                        "detail":rowPekerja.detail,
+                                                        "loginUser":loginUser
                                                     };
                                                 }).then(function(b){
                                                     //console.log(a);
@@ -146,31 +162,45 @@ router.get('/', function(req, res, next) {
 
 /* POST home page. */
 router.post('/', function(req, res, next) {
+    var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
     if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
         console.log("Not Logged");
         res.redirect('/portal-auth');
     }else {
         var updateQry = "";
+        var loginUser = req.session.name;
         var idKerjakan = req.body.idKerjakan || {};
-        var idAssign = req.body.idAssign || {};
+        var assign = req.body.assign || {};
+        var idAssign = req.session.priv || {};
+        var idLaporan = req.body.idLaporan || {};
         var laporsubmit = req.body.laporsubmit || {};
         var laporUpdate = req.body.laporStatus || {};
         if(laporsubmit == "kerjakan"){
             updateQry = "UPDATE db_portal_it.laporan SET " +
                 "status = 'On Doing', " +
-                "assign = '"+req.session.name+"', " +
+                "assign = '"+loginUser+"', " +
                 "tanggalAssign = '"+dateNow+"' " +
                 "WHERE idlaporan = '"+idKerjakan+"' ";
-        }else if(laporsubmit == "selesai"){
+        }else if(laporsubmit == "selesai" && idAssign == "1"){
             updateQry = "UPDATE db_portal_it.laporan SET " +
                 "status = 'Done', " +
                 "resolve = 'TRUE', " +
                 "tanggalSelesai = '"+dateNow+"' " +
-                "WHERE idlaporan = '"+idAssign+"' ";
+                "WHERE idlaporan = '"+idLaporan+"' ";
+        }else if(laporsubmit == "selesai" && idAssign == "2"){
+            updateQry = "UPDATE db_portal_it.laporan SET " +
+                "status = 'Done' " +
+                "WHERE idlaporan = '"+idLaporan+"' ";
         }else if(laporsubmit == "update"){
             updateQry = "UPDATE db_portal_it.laporan SET " +
-                "status = '"+laporUpdate+"' " +
-                "WHERE idlaporan = '"+idAssign+"' ";
+                "catatan = '"+laporUpdate+"' " +
+                "WHERE idlaporan = '"+idLaporan+"' ";
+        }else if(laporsubmit == "takeOver"){
+            updateQry = "UPDATE db_portal_it.laporan SET " +
+                "status = 'On Doing', " +
+                "assign = '"+loginUser+"', " +
+                "tanggalAssign = '"+dateNow+"' " +
+                "WHERE idlaporan = '"+idLaporan+"' ";
         }else{
             console.log("Error");
         }
@@ -189,6 +219,7 @@ router.post('/', function(req, res, next) {
 
 /* GET timeline page. */
 router.get('/workflow', function(req, res, next) {
+    var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
     //if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
     //    console.log("Not Logged");
     //    res.redirect('/portal-auth');
@@ -216,7 +247,7 @@ router.get('/workflow', function(req, res, next) {
                             "detail":rowTimeline.detail
                         });
                     }).then(function(){
-                        console.log(layoutTemplate);
+                        //console.log(layoutTemplate);
                         res.render('admin-timeline', {
                             layout: "admin",
                             layoutTemplate: layoutTemplate

@@ -27,7 +27,15 @@
                                         <div class="mb-30">
                                             <form action="" method="post">
                                                 <input type="hidden" value="{{idLaporan}}" name="idKerjakan"/>
-                                                <input type="submit" value="kerjakan" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10"/>
+                                                {{#compare classification "1" operator="=="}}
+                                                    <button type="submit" value="kerjakan" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10">Kerjakan</button>
+                                                {{/compare}}
+                                                {{#compare classification "2" operator="=="}}
+                                                    <button type="submit" value="kerjakan" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10">Kerjakan</button>
+                                                {{/compare}}
+                                                {{#compare classification "3" operator="=="}}
+                                                    <button type="submit" value="kerjakan" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10  disabled" disabled>Kerjakan</button>
+                                                {{/compare}}
                                             </form>
                                         </div>
                                     </div>
@@ -58,18 +66,28 @@
                                             <li>
                                                 <div class="collapsible-header">
                                                     <i class="circle">{{noAntrian}}</i> {{nama}} ({{divisi}}) - {{jenis}}
+                                                    <span class="admin-stat badge white-text blue">{{status}}</span>
                                                 </div>
                                                 <div class="collapsible-body">
                                                     <p>Tanggal Request : {{dateTime tanggalBuat}}</p>
                                                     <p>Status : {{status}}</p>
+                                                    <p>Catatan : {{catatan}}</p>
                                                     <p>{{breakLine detail}}</p>
                                                     <p class="divider"></p>
                                                     <div class="mb-30">
                                                         <form action="" method="post">
-                                                            <input type="hidden" value="{{idLaporan}}" name="idAssign"/>
-                                                            <input type="submit" value="selesai" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10"/>
-                                                            <a value="update" class="waves-effect waves-light blue darken-3 right ml-10 btn modal-trigger" href="#modalUpdate{{idLaporan}}">Update Status</a>
-
+                                                            {{#compare assign loginUser operator="=="}}
+                                                                <input type="hidden" value="{{idAssign}}" name="idAssign"/>
+                                                                <input type="hidden" value="{{idLaporan}}" name="idLaporan"/>
+                                                                <button type="submit" value="selesai" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10">Selesai</button>
+                                                                <a value="update" class="waves-effect waves-light blue darken-3 right ml-10 btn modal-trigger" href="#modalUpdate{{idLaporan}}">Update Status</a>
+                                                            {{else}}
+                                                                <input type="hidden" value="{{idAssign}}" name="idAssign"/>
+                                                                <input type="hidden" value="{{idLaporan}}" name="idLaporan"/>
+                                                                <button type="submit" name="laporsubmit" value="takeOver" class="waves-effect waves-light orange darken-3 right ml-10 btn">Take Over</button>
+                                                            {{/compare}}
+                                                        </form>
+                                                        <form action="" method="post">
                                                             <!-- Modal Structure -->
                                                             <div id="modalUpdate{{idLaporan}}" class="modal">
                                                                 <div class="modal-content">
@@ -82,7 +100,9 @@
                                                                     </div>
                                                                 </div>
                                                                 <div class="modal-footer">
-                                                                    <input type="submit" value="update" name="laporsubmit" id="{{idLaporan}}" class="mb-10 waves-effect waves-light btn blue darken-3 right ml-10"/>
+                                                                    <input type="hidden" value="{{idAssign}}" name="idAssign"/>
+                                                                    <input type="hidden" value="{{idLaporan}}" name="idLaporan"/>
+                                                                    <button type="submit" value="update" name="laporsubmit" id="{{idLaporan}}" class="mb-10 waves-effect waves-light btn blue darken-3 right ml-10">Update</button>
                                                                     <a href="#!" class=" mb-10 modal-action modal-close waves-effect waves-light blue darken-3 right ml-10 btn">Batal</a>
                                                                 </div>
                                                             </div>

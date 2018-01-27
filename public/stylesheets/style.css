@@ -1109,3 +1109,11 @@ div .freeze {
 .area-height-10{
     min-height: 10rem !important;
 }
+
+.admin-stat {
+    font-weight: 300;
+    font-size: 0.8rem;
+    color: #fff;
+    background-color: #26a69a;
+    border-radius: 2px;
+}

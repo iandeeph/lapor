@@ -12,11 +12,11 @@
             <div class="input-field col s12">
                 <select id="laporjenis" name="lapor[jenis]" required>
                     <option value="" disabled selected>Pilih Jenis Laporan</option>
-                    <option value="Permintaan Perlengkapan Anak Baru">Permintaan Perlengkapan Anak Baru</option>
+                    <option value="Permintaan Perlengkapan & Akses Login Anak Baru">Permintaan Perlengkapan & Akses Login Anak Baru</option>
                     <option value="Informasi Anak Resign">Informasi Anak Resign</option>
                     <option value="Permintaan Pergantian Perangkat (mouse rusak, laptop error, dll)">Permintaan Pergantian Perangkat (mouse rusak, laptop error, dll)</option>
                     <option value="Setting printer">Setting printer</option>
-                    <option value="Akses Login (portal, zoho, dll)">Akses Login (portal, zoho, dll)</option>
+                    <option value="Tambah Akses Baru">Tambah Akses Baru</option>
                     <option value="Tambah Aplikasi">Tambah Aplikasi</option>
                     <option value="Troubleshoot/Perangkat Error (Laptop, Mouse, Headset)">Troubleshoot/Perangkat Error (Laptop, Mouse, Headset)</option>
                     <option value="Masalah Telepon">Masalah Telepon</option>
@@ -25,19 +25,21 @@
                 <label>Jenis Laporan</label>
             </div>
             <div class="file-field input-field col s12 m6 l6">
-                <input id="laporname" name="lapor[nama]" type="text" class="validate" required>
+                <input id="laporname" name="lapor[nama]" type="text" class="validate" placeholder="Untuk jenis permintaan 'Penyediaan Anak Baru' harap diisi dengan nama SPV" required title="Untuk jenis permintaan 'Penyediaan Anak Baru' harap diisi dengan nama SPV dan nama anaknya dijelaskan di kolom detail">
                 <label for="laporname0">Nama</label>
             </div>
             <div class="file-field input-field col s12 m6 l6">
-                <input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" required>
+                <input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" placeholder="Untuk jenis permintaan 'Penyediaan Anak Baru' harap diisi dengan divisi SPV" required title="Untuk jenis permintaan 'Penyediaan Anak Baru' harap diisi dengan divis SPV">
                 <label for="lapordivisi">Divisi</label>
             </div>
             <div class="input-field col s12">
-                <textarea id="lapordetail" name="lapor[detail]" class="materialize-textarea"></textarea>
+                <textarea id="lapordetail" name="lapor[detail]" class="materialize-textarea" placeholder="Masukan detail permintaan.
+Untuk jenis permintaan 'Anak Baru' harap sertakan SALAESCODE, NAMA & EMAIL PRIBADI ANAK BARU NYA.
+"></textarea>
                 <label for="lapordetail">Detail Permintaan</label>
             </div>
             <div class="input-field col s12 mb-20">
-                <input type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10"></input>
+                <button type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>
             </div>
             <div class="col s12">
                 <span class="font-20 green-text" id="message">{{message}}</span>
