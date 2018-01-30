@@ -1,43 +1,4 @@
-var today = new Date();
-var day = today.getDate();
-day ='#tanggal' + day;
 
-var $tableParent;
-var $dayElement;
-var $dayPos;
-var numFieldTrx = 1;
-
-function parseCategory(category) {
-    var parse = "";
-    switch (category) {
-        case '1':
-            parse = "Laptop";
-            break;
-        case '2':
-            parse = "Charger Laptop";
-            break;
-        case '3':
-            parse = "Mouse";
-            break;
-        case '4':
-            parse = "Headset";
-            break;
-        case '5':
-            parse = "Keyboard";
-            break;
-        case '6':
-            parse = "Monitor";
-            break;
-        case '7':
-            parse = "Other";
-            break;
-        default:
-            parse = "Error";
-            break;
-    }
-
-    return parse;
-}
 
 $(document).ready(function() {
     $(".button-collapse").sideNav();
@@ -46,309 +7,6 @@ $(document).ready(function() {
     );
     $('select').material_select();
     $('.tooltipped').tooltip({delay: 50});
-    $("#btnAddTrx").click(function () {
-        $("#trxBlock").append('' +
-            '<div class="input-field col s2 addedTrx'+ numFieldTrx +'">' +
-            '<input name="transactions['+ numFieldTrx +'][trx]" id="trx'+ numFieldTrx +'" type="text" class="validate">' +
-            '<label for="trx'+ numFieldTrx +'">Trx</label>' +
-            '</div>' +
-            '<div class="input-field col s4 addedTrx'+ numFieldTrx +'">' +
-            '<input name="transactions['+ numFieldTrx +'][phone]" id="phone'+ numFieldTrx +'" type="text" class="validate">' +
-            '<label for="phone'+ numFieldTrx +'">No. Telp</label>' +
-            '</div> ' +
-            '<div class="input-field col s3 addedTrx'+ numFieldTrx +'"> ' +
-            '<select name="transactions['+ numFieldTrx +'][untuk]" id="untuk'+ numFieldTrx +'"> ' +
-            '<option value="1">Kedoya</option> ' +
-            '<option value="2">Biak</option> ' +
-            '<option value="3">Daan Mogot</option> ' +
-            '</select> ' +
-            '<label>Untuk : </label> ' +
-            '</div>' +
-            '<div class="col s3 mb-50 addedTrx'+ numFieldTrx +'" name="addedTrx'+ numFieldTrx +'">' +
-            '<a class="btn-floating btn waves-effect waves-light red darken-3 btnRemTrx'+ numFieldTrx +'" name="btnRemTrx'+ numFieldTrx +'" id="'+ numFieldTrx +'" title="Hapus"><i class="material-icons">remove</i></a>' +
-            '</div>');
-        $('select').material_select();
-        numFieldTrx++;
-
-        $('[name^=btnRemTrx]').click(function () {
-            var numToRem = $(this).attr('id');
-            var elm = ".addedTrx"+ numToRem;
-
-            console.log(elm);
-
-            $(elm).remove();
-        });
-    });
-
-    var optionInventory = [];
-    var optionUsers = [];
-    var optionPosition = [];
-    var optionDivision = [];
-    var optionLocation = [];
-    //$.ajax({
-    //    url: './export-ajax',
-    //    type: "GET",
-    //    dataType: "json",
-    //    success: function (datas) {
-    //        var inventory = datas.inventory;
-    //        var users = datas.users;
-    //        var position = datas.position;
-    //        var division = datas.division;
-    //        var location = datas.location;
-    //        for (var keysInv in inventory) {
-    //            if (!inventory.hasOwnProperty(keysInv)) continue;
-    //            var resInv = inventory[keysInv];
-    //            optionInventory.push('<option value="' + resInv.id + '">' + resInv.id + ' - ' + parseCategory(resInv.idcategory) + ' (' + resInv.name + ')</option>');
-    //        }
-    //        for (var keys in users) {
-    //            if (!users.hasOwnProperty(keys)) continue;
-    //            var resUser = users[keys];
-    //            optionUsers.push('<option value="' + resUser.iduser + '">' + resUser.name + ' - ' + resUser.position + '</option>');
-    //        }
-    //        for (var keysPosition in position) {
-    //            if (!position.hasOwnProperty(keysPosition)) continue;
-    //            var resPosition = position[keysPosition];
-    //            optionPosition.push('<option value="' + resPosition.idposition + '">' + resPosition.name + '</option>');
-    //        }
-    //        for (var keysDivision in division) {
-    //            if (!division.hasOwnProperty(keysDivision)) continue;
-    //            var resDivision = division[keysDivision];
-    //            optionDivision.push('<option value="' + resDivision.iddivsion + '">' + resDivision.name + '</option>');
-    //        }
-    //        for (var keysLocation in location) {
-    //            if (!location.hasOwnProperty(keysLocation)) continue;
-    //            var resLocation = location[keysLocation];
-    //            optionLocation.push('<option value="' + resLocation.idoffice + '">' + resLocation.name + '</option>');
-    //        }
-    //    }
-    //});
-
-    $("#btnAddUserModal").click(function () {
-        $("#userModalBlock").append('' +
-            '<div class="file-field input-field col s12 m6 l4 addedTrx'+ numFieldTrx +'">' +
-            '<input id="addName'+ numFieldTrx +'" name="user['+ numFieldTrx +'][name]" type="text" class="validate" placeholder="Nama User" required>' +
-            '<label class="active" for="addName'+ numFieldTrx +'">Nama</label>' +
-            '</div>' +
-            '<div class="input-field col s12 m6 l3 addedTrx'+ numFieldTrx +'">' +
-            '<select id="addUserPosition'+ numFieldTrx +'" name="user['+ numFieldTrx +'][position]">' +
-            '<option value="" disabled selected>Pilih Posisi</option>' +
-            optionPosition +
-            '</select>' +
-            '<label>Posisi</label>' +
-            '</div>' +
-            '<div class="input-field col s12 m6 l2 addedTrx'+ numFieldTrx +'">' +
-            '<select id="addUserDivision'+ numFieldTrx +'" name="user['+ numFieldTrx +'][division]">' +
-            '<option value="" disabled selected>Pilih Divisi</option>' +
-            optionDivision +
-            '</select>' +
-            '<label>Divisi</label>' +
-            '</div>' +
-            '<div class="input-field col s12 m6 l2 addedTrx'+ numFieldTrx +'">' +
-            '<select id="addUserLocation'+ numFieldTrx +'" name="user['+ numFieldTrx +'][location]">' +
-            '<option value="" disabled selected>Pilih Lokasi</option>' +
-            optionLocation +
-            '</select>' +
-            '<label>Lokasi</label>' +
-            '</div>' +
-            '<div class="col s1 mb-50 addedTrx'+ numFieldTrx +'" name="addedTrx'+ numFieldTrx +'">' +
-            '<a class="btn-floating btn waves-effect waves-light red darken-3 btnRemTrx'+ numFieldTrx +'" name="btnRemTrx'+ numFieldTrx +'" id="'+ numFieldTrx +'" title="Hapus"><i class="material-icons">remove</i></a>' +
-            '</div>');
-        $('select').material_select();
-        numFieldTrx++;
-
-        $('[name^=btnRemTrx]').click(function () {
-            var numToRem = $(this).attr('id');
-            var elm = ".addedTrx"+ numToRem;
-
-            console.log(elm);
-
-            $(elm).remove();
-        });
-    });
-
-    $("#btnAddInvTrx").click(function () {
-        $("#trxBlock").append('' +
-            '<div class="input-field col s5 addedTrx'+ numFieldTrx +'">' +
-            '<select name="export['+ numFieldTrx +'][item]" id="item'+ numFieldTrx +'">' +
-            '<option value="" disabled selected>Pilih Item</option>' +
-            optionInventory +
-            '</select>' +
-            '<label>ID Inventory : </label>' +
-            '</div>' +
-            '<div class="input-field col s6 addedTrx'+ numFieldTrx +'">' +
-            '<select name="export['+ numFieldTrx +'][user]" id="user'+ numFieldTrx +'">' +
-            '<option value="" disabled selected>Pilih User</option>' +
-            optionUsers +
-            '</select>' +
-            '<label>User : </label>' +
-            '</div>' +
-            '<div class="col s1 mb-50 addedTrx'+ numFieldTrx +'" name="addedTrx'+ numFieldTrx +'">' +
-            '<a class="btn-floating btn waves-effect waves-light red darken-3 btnRemTrx'+ numFieldTrx +'" name="btnRemTrx'+ numFieldTrx +'" id="'+ numFieldTrx +'" title="Hapus"><i class="material-icons">remove</i></a>' +
-            '</div>');
-        $('select').material_select();
-        numFieldTrx++;
-
-        $('[name^=btnRemTrx]').click(function () {
-            var numToRem = $(this).attr('id');
-            var elm = ".addedTrx"+ numToRem;
-
-            console.log(elm);
-
-            $(elm).remove();
-        });
-    });
-
-    $("#addItemButton").click(function () {
-        $("#addItemBlock").append('' +
-            '<div class="col s12 mt-20 border-bottom addItemContent'+ numFieldTrx +'">' +
-            '<div class="input-field col s12 m6 l6">' +
-            '<select id="addCategory'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][category]" required>' +
-            '<option value="" disabled selected>Pilih Jenis Item</option>' +
-            '<option value="1">Laptop</option>' +
-            '<option value="2">Charger Laptop</option>' +
-            '<option value="3">Mouse</option>' +
-            '<option value="4">Headset</option>' +
-            '<option value="5">Keyboard</option>' +
-            '<option value="6">Monitor</option>' +
-            '</select>' +
-            '<label>Jenis Item</label>' +
-            '</div>' +
-            '<div class="file-field input-field col s12 m6 l6 mb-10">' +
-            '<input id="addId'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][id]" type="text" class="validate" required>' +
-            '<label for="addId'+ numFieldTrx +'">ID Inventory</label>' +
-            '</div>' +
-            '<div class="file-field input-field col s12">' +
-            '<input id="addName'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][name]" type="text" class="validate" required>' +
-            '<label for="addName'+ numFieldTrx +'">Nama</label>' +
-            '</div>' +
-            '<div class="file-field input-field col s12 m6 l6">' +
-            '<input id="addSN'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][sn]" type="text" class="validate" required>' +
-            '<label for="addSN'+ numFieldTrx +'">Serial Number</label>' +
-            '</div>' +
-            '<div class="input-field col s12 m6 l6">' +
-            '<select id="addLokasi'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][lokasi]" required>' +
-            '<option value="" disabled selected>Lokasi</option>' +
-            '<option value="1">Central Park</option>' +
-            '<option value="2">Kedoya</option>' +
-            '</select>' +
-            '<label>Jenis Item</label>' +
-            '</div>' +
-            '<div class="input-field col s12">' +
-            '<textarea id="addNote'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][note]" class="materialize-textarea"></textarea>' +
-            '<label for="addNote'+ numFieldTrx +'">Catatan</label>' +
-            '</div>' +
-            '<div class="input-field col s12 mb-20">' +
-            '<a name="duplicateButton'+ numFieldTrx +'" id="'+ numFieldTrx +'" class="waves-effect waves-light btn orange darken-3 right ml-10">Duplicate</a>' +
-            '<a name="remItemButton'+ numFieldTrx +'" id="'+ numFieldTrx +'" class="waves-effect waves-light btn red right disabled" disabled>Remove</a>' +
-            '</div>' +
-            '</div>' +
-            '');
-        $('select').material_select();
-        numFieldTrx++;
-
-        var remBtn = $('[name^=remItemButton]');
-
-        remBtn.removeClass('disabled');
-        remBtn.removeAttr('disabled');
-
-        remBtn.click(function () {
-            var numToRem = $(this).attr('id');
-            var elm = ".addItemContent"+ numToRem;
-
-            console.log(elm);
-
-            $(elm).remove();
-        });
-    });
-
-    //scrolling tabble
-
-    $dayElement = $(day);
-    $dayPos = $dayElement.position();
-
-    var $homeTable = $('.home-table table');
-    $tableParent = $homeTable.parent();
-
-    var $table = $('.auto-scroll');
-    if ($table.length > 0) {
-        $.each($table, function () {
-            var $self = $(this);
-            var $parent = $self.parent();
-            var width = $parent.outerWidth(true);
-            var scrollSpeed = 50;
-            $parent.css({
-                overflow: 'auto'
-            });
-
-            $self.mousemove(function (e) {
-                if (e.pageX >= $parent.offset().left && e.pageX <= $parent.offset().left + 100) {
-                    $parent[0].scrollLeft -= scrollSpeed;
-                } else if (e.pageX >= $parent.offset().left + width - 100 && e.pageX <= $parent.offset().left + width) {
-                    $parent[0].scrollLeft += scrollSpeed;
-                }
-            });
-        });
-    }
-
-    if ($homeTable.length > 0) {
-        $.each($table, function () {
-            $tableParent.scrollLeft($dayPos.left - (($tableParent.outerWidth(true) / 2) - ($dayElement.outerWidth(true) / 2)));
-        });
-    }
-
-    var inputListGroup = $('.inputListGroup');
-    var listGroup = $('.listGroup');
-    var tbody = $('tbody');
-
-    inputListGroup.hide();
-    inputListGroup.attr("disabled", true);
-
-    listGroup.click(function () {
-        tbody.find('span').show();
-        tbody.find('input').hide();
-        tbody.find('input').attr("disabled", true);
-        tbody.find('input').removeClass('blue-text');
-        $(this).children('span').hide();
-        $(this).children('input').show();
-        $(this).children('input').addClass('blue-text');
-        $(this).parent().children('td').children('input').attr("disabled", false);
-    });
-
-    inputListGroup.change(function(){
-        $('#formListGroup').submit();
-    });
-
-    var myTable = "#myTable";
-    if ($(myTable).length > 0){
-        $(function(){
-            $("#myTable").tablesorter();
-        });
-    }
-
-
-    $('.icon_action').hover(function(){
-        $(this).removeClass('grey-text');
-        $(this).addClass('grey-text text-lighten-3');
-    }, function(){
-        $(this).removeClass('grey-text text-lighten-3');
-        $(this).addClass('grey-text');
-    });
-
-    setTimeout(
-        function()
-        {
-            var message = $('#message');
-            if (message.text().indexOf('New Hire berhasil ditambah') == 0 ){
-                window.location = '/inventory/new-hire';
-            } else if (message.text().indexOf('Item berhasil di export, item updated..!!') == 0){
-                window.location = '/inventory/export';
-            } else if (message.text().indexOf('Item berhasil masuk ke Stock, item updated..!!') == 0){
-                window.location = '/inventory/import';
-            } else if (message.text().indexOf('User berhasil ditambah, user updated..!!') == 0){
-                window.location = '/inventory/user';
-            }
-
-        }, 2000);
 
     $('.modal').modal({
             dismissible: false, // Modal can be dismissed by clicking outside of the modal
@@ -361,165 +19,238 @@ $(document).ready(function() {
     );
 });
 
-$(document).on('click', '.duplicateButton', function() {
-    var idDuplicateBtn = $(this).attr('id');
-    var id      = $('#addId'+ idDuplicateBtn).val();
-    var jenis   = $('#addCategory'+ idDuplicateBtn).val();
-    var nama    = $('#addName'+ idDuplicateBtn).val();
-    var SN      = $('#addSN'+ idDuplicateBtn).val();
-    var lokasi  = $('#addLokasi'+ idDuplicateBtn).val();
-    var note    = $('#addNote'+ idDuplicateBtn).val();
+function newUserBundle(){
+    $(document).on('change', 'select[id^=detailPilihAkses]', function() {
+        var selectVal = $(this).val();
+        $(this).parent('div').parent('div').parent('div').find('input[id^=detailSalesCode], input[id^=detailZohoRole], input[id^=detailPortalRole]').attr('disabled',true).addClass('disabled');
+        if(jQuery.inArray('1',selectVal) !== -1 && jQuery.inArray('2',selectVal) !== -1){
+            $(this).parent('div').parent('div').parent('div').find('input[id^=detailSalesCode], input[id^=detailZohoRole], input[id^=detailPortalRole]').attr('disabled',false).removeClass('disabled');
+        }else if(jQuery.inArray('1',selectVal) !== -1 && jQuery.inArray('2',selectVal) == -1) {
+            $(this).parent('div').parent('div').parent('div').find('input[id^=detailZohoRole]').attr('disabled',false).removeClass('disabled');
+        }else if(jQuery.inArray('1',selectVal) == -1 && jQuery.inArray('2',selectVal) !== -1) {
+            $(this).parent('div').parent('div').parent('div').find('input[id^=detailSalesCode],input[id^=detailPortalRole]').attr('disabled',false).removeClass('disabled');
+        }else{
+            $(this).parent('div').parent('div').parent('div').find('input[id^=detailSalesCode], input[id^=detailZohoRole], input[id^=detailPortalRole]').attr('disabled',true).addClass('disabled');
+        }
+    });
 
-    console.log(idDuplicateBtn);
-    console.log(id);
-    console.log(jenis);
-    console.log(nama);
-    console.log(SN);
-    console.log(lokasi);
-    console.log(note);
+    var userNum = 1;
+    $('#btnAddUser').click(function() {
+        var divBlock = $('#newUserBlock');
+        var userContent = '' +
+            '<div class="col s12 border-bottom mt-20"></div>' +
+            '<div class="addedUserContent'+ userNum +'">' +
+            '<div class="input-field col s12 m6 l3">' +
+            '<input id="detailNama0" name="detail['+ userNum +'][nama]" type="text" class="validate" required>' +
+            '<label for="detailNama0">Nama User</label>' +
+            '</div>' +
+            '<div class="input-field col s12 m6 l3">' +
+            '<input id="detailEmail0" name="detail['+ userNum +'][email]" type="email" class="validate" required>' +
+            '<label for="detailEmail'+ userNum +'">Email Pribadi</label>' +
+            '</div>' +
+            '<div class="input-field col s12 m6 l3">' +
+            '<input id="detailDivisi'+ userNum +'" name="detail['+ userNum +'][divsi]" type="text" class="validate" required>' +
+            '<label for="detailDivisi'+ userNum +'">Divisi User</label>' +
+            '</div>' +
+            '<div class="input-field col s12 m6 l3">' +
+            '<input id="detailJabatan'+ userNum +'" name="detail['+ userNum +'][jabatan]" type="text" class="validate" required>' +
+            '<label for="detailJabatan'+ userNum +'">Jabatan User</label>' +
+            '</div>' +
+            '<div class="input-field col s12 l3">' +
+            '<select id="detailPilihAkses'+ userNum +'" name="detail['+ userNum +'][akses]" multiple required>' +
+            '<option value="" disabled selected>Pilih Akses yang Dibutuhkan</option>' +
+            '<option value="1">Zoho</option>' +
+            '<option value="2">Portal</option>' +
+            '<option value="3">Telpon</option>' +
+            '<option value="4">Email Cermati</option>' +
+            '<option value="5">Keystone</option>' +
+            '<option value="6">Basecamp</option>' +
+            '</select>' +
+            '<label for="detailPilihAkses'+ userNum +'">Kebutuhan Akses</label>' +
+            '</div>' +
+            '<div class="input-field col s12 m12 l3">' +
+            '<input id="detailSalesCode'+ userNum +'" name="detail['+ userNum +'][salesCode]" type="text" class="validate disabled" required disabled>' +
+            '<label for="detailSalesCode'+ userNum +'">Sales Code</label>' +
+            '</div>' +
+            '<div class="input-field col s12 m12 l3">' +
+            '<input id="detailZohoRole'+ userNum +'" name="detail['+ userNum +'][zohoRole]" type="text" class="validate disabled" required disabled>' +
+            '<label for="detailZohoRole'+ userNum +'">Role Zoho</label>' +
+            '</div>' +
+            '<div class="input-field col s12 m12 l3">' +
+            '<input id="detailPortalRole'+ userNum +'" name="detail['+ userNum +'][portalRole]" type="text" class="validate disabled" required disabled>' +
+            '<label for="detailPortalRole'+ userNum +'">Role Portal</label>' +
+            '</div>' +
+            '<div class="input-field col s12">' +
+            '<textarea id="detailCatatan'+ userNum +'" name="detail['+ userNum +'][catatan]" class="materialize-textarea"></textarea>' +
+            '<label for="detailCatatan'+ userNum +'">Catatan Tambahan (Opsional)</label>' +
+            '</div>' +
+            '</div>' +
+            '<div class="col s12 right">' +
+            '<a name="btnDelUser" id="'+ userNum +'" class="btn waves-effect waves-light white-text red right" title="Hapus User">Hapus User</a>' +
+            '</div>' +
+            '';
+        $(divBlock).append(userContent);
+        $('select').material_select();
+        userNum++;
 
-    var selDefault = "selected";
-    var selLaptop = "";
-    var selCharger = "";
-    var selMouse = "";
-    var selHS = "";
-    var selKeyBoard = "";
-    var selMonitor = "";
-    var selCP = "";
-    var selKedoya ="";
+        $('[name^=btnDelUser]').click(function () {
+            var numToRem = $(this).attr('id');
+            var elm = ".addedUserContent"+ numToRem;
 
-    switch (jenis) {
-        case "1":
-            selLaptop = "selected";
-            break;
-        case "2":
-            selCharger = "selected";
-            break;
-        case "3":
-            selMouse = "selected";
-            break;
-        case "4":
-            selHS = "selected";
-            break;
-        case "5":
-            selKeyBoard = "selected";
-            break;
-        case "6":
-            selMonitor = "selected";
-            break;
-        default:
-            selDefault = "selected";
-    }
+            console.log(elm);
 
-    switch (lokasi) {
-        case "1":
-            selCP = "selected";
-            break;
-        case "2":
-            selKedoya = "selected";
-            break;
-        default:
-            selDefault = "selected";
-    }
+            $(elm).remove();
+        });
+    });
+}
 
-    var appendStr = '' +
-        '<div class="col s12 mt-20 border-bottom addItemContent'+ numFieldTrx +'">' +
+$(document).on('change', 'select[id=laporjenis]', function() {
+    var existingContent = $('#templateContent');
+    var divBlock = $('#templateBlock');
+    var laporBody = $('#laporPageBody');
+    $(laporBody).removeClass('container');
+    $(laporBody).removeClass('almost-full');
+    var newMember = "" +
+        '<div id="templateContent">' +
+        '<div class="col s12 center blue"><span class="white-text center-align">Data Atasan</span></div>' +
         '<div class="input-field col s12 m6 l6">' +
-        '<select id="addCategory'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][category]" required>' +
-        '<option '+ selDefault +' value="" disabled>Pilih Jenis Item</option>' +
-        '<option '+ selLaptop +' value="1">Laptop</option>' +
-        '<option '+ selCharger +' value="2">Charger Laptop</option>' +
-        '<option '+ selMouse +' value="3">Mouse</option>' +
-        '<option '+ selHS +' value="4">Headset</option>' +
-        '<option '+ selKeyBoard +' value="5">Keyboard</option>' +
-        '<option '+ selMonitor +' value="6">Monitor</option>' +
-        '</select>' +
-        '<label>Jenis Item</label>' +
-        '</div>' +
-        '<div class="file-field input-field col s12 m6 l6 mb-10">' +
-        '<input id="addId'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][id]" type="text" class="validate" value="'+ id +'" required>' +
-        '<label for="addId'+ numFieldTrx +'" class="active">ID Inventory</label>' +
-        '</div>' +
-        '<div class="file-field input-field col s12">' +
-        '<input id="addName'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][name]" type="text" class="validate" value ="' + nama +'" required>' +
-        '<label for="addName'+ numFieldTrx +'" class="active">Nama</label>' +
-        '</div>' +
-        '<div class="file-field input-field col s12 m6 l6">' +
-        '<input id="addSN'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][sn]" type="text" class="validate" value="'+ SN +'" required>' +
-        '<label for="addSN'+ numFieldTrx +'" class="active">Serial Number</label>' +
+        '<input id="laporname" name="lapor[nama]" type="text" class="validate" required>' +
+        '<label for="laporname">Nama Atasan</label>' +
         '</div>' +
         '<div class="input-field col s12 m6 l6">' +
-        '<select id="addLokasi'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][lokasi]" required>' +
-        '<option '+ selDefault +' value="" disabled>Lokasi</option>' +
-        '<option '+ selCP +' value="1">Central Park</option>' +
-        '<option '+ selKedoya +' value="2">Kedoya</option>' +
+        '<input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" required>' +
+        '<label for="lapordivisi">Divisi Atasan</label>' +
+        '</div>' +
+        '<div class="col s12 center blue"><span class="white-text center-align">Data User Baru</span></div>' +
+        '<div class="row">' +
+        '<div class="col s12" id="newUserBlock">' +
+        '<div class="newUserContent">' +
+        '<div class="input-field col s12 m6 l3">' +
+        '<input id="detailNama0" name="detail[0][nama]" type="text" class="validate" required>' +
+        '<label for="detailNama0">Nama User</label>' +
+        '</div>' +
+        '<div class="input-field col s12 m6 l3">' +
+        '<input id="detailEmail0" name="detail[0][email]" type="email" class="validate" required>' +
+        '<label for="detailEmail0">Email Pribadi</label>' +
+        '</div>' +
+        '<div class="input-field col s12 m6 l3">' +
+        '<input id="detailDivisi0" name="detail[0][divsi]" type="text" class="validate" required>' +
+        '<label for="detailDivisi0">Divisi User</label>' +
+        '</div>' +
+        '<div class="input-field col s12 m6 l3">' +
+        '<input id="detailJabatan0" name="detail[0][jabatan]" type="text" class="validate" required>' +
+        '<label for="detailJabatan0">Jabatan User</label>' +
+        '</div>' +
+        '<div class="input-field col s12 l3">' +
+        '<select id="detailPilihAkses0" name="detail[0][akses]" multiple required>' +
+        '<option value="" disabled selected>Pilih Akses yang Dibutuhkan</option>' +
+        '<option value="1">Zoho</option>' +
+        '<option value="2">Portal</option>' +
+        '<option value="3">Telpon</option>' +
+        '<option value="4">Email Cermati</option>' +
+        '<option value="5">Keystone</option>' +
+        '<option value="6">Basecamp</option>' +
         '</select>' +
-        '<label>Jenis Item</label>' +
+        '<label for="detailPilihAkses0">Kebutuhan Akses</label>' +
+        '</div>' +
+        '<div class="input-field col s12 m12 l3">' +
+        '<input id="detailSalesCode0" name="detail[0][salesCode]" type="text" class="validate disabled" required disabled>' +
+        '<label for="detailSalesCode0">Sales Code</label>' +
+        '</div>' +
+        '<div class="input-field col s12 m12 l3">' +
+        '<input id="detailZohoRole0" name="detail[0][zohoRole]" type="text" class="validate disabled" required disabled>' +
+        '<label for="detailZohoRole0">Role Zoho</label>' +
+        '</div>' +
+        '<div class="input-field col s12 m12 l3">' +
+        '<input id="detailPortalRole0" name="detail[0][portalRole]" type="text" class="validate disabled" required disabled>' +
+        '<label for="detailPortalRole0">Role Portal</label>' +
         '</div>' +
         '<div class="input-field col s12">' +
-        '<textarea id="addNote'+ numFieldTrx +'" name="adds['+ numFieldTrx +'][note]" class="materialize-textarea">'+ note +'</textarea>' +
-        '<label for="addNote'+ numFieldTrx +'" class="active">Catatan</label>' +
+        '<textarea id="detailCatatan0" name="detail[0][catatan]" class="materialize-textarea"></textarea>' +
+        '<label for="detailCatatan0">Catatan Tambahan (Opsional)</label>' +
+        '</div>' +
+        '</div>' +
+        '<div class="col s12 right">' +
+        '<a id="btnAddUser" class="btn waves-effect waves-light white-text light-green right" title="Tambah User">Tambah User</a>' +
+        '</div>' +
+        '</div>' +
         '</div>' +
         '<div class="input-field col s12 mb-20">' +
-        '<a name="duplicateButton'+ numFieldTrx +'" id="'+ numFieldTrx +'" class="duplicateButton waves-effect waves-light btn orange darken-3 right ml-10">Duplicate</a>' +
-        '<a name="remItemButton'+ numFieldTrx +'" id="'+ numFieldTrx +'" class="waves-effect waves-light btn red right disabled" disabled>Remove</a>' +
+        '<button type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
+        '</div>' +
+        '</div>' +
+        "";
+    var other = '' +
+        '<div id="templateContent">' +
+        '<div class="file-field input-field col s12 m6 l4">' +
+        '<input id="laporname" name="lapor[nama]" type="text" class="validate" required>' +
+        '<label for="laporname0">Nama Anda</label>' +
+        '</div>' +
+        '<div class="file-field input-field col s12 m6 l4">' +
+        '<input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" required>' +
+        '<label for="lapordivisi">Divisi</label>' +
+        '</div>' +
+        '<div class="input-field col s12 m6 l3">' +
+        '<select id="lokasi" name="lapor[lokasi]" required>' +
+        '<option value="" disabled selected>Pilih Lokasi</option>' +
+        '<option value="Daan Mogot">Daan Mogot</option>' +
+        '<option value="Kedoya 1">Kedoya 1</option>' +
+        '<option value="Kedoya 2">Kedoya 2</option>' +
+        '<option value="Kedoya 3">Kedoya 3</option>' +
+        '</select>' +
+        '<label>Lokasi</label>' +
+        '</div>' +
+        '<div class="file-field input-field col s12 m6 l1">' +
+        '<input id="laporLantai" name="lapor[lantai]" type="text" class="validate" required>' +
+        '<label for="laporLantai">Lantai</label>' +
+        '</div>' +
+        '<div class="input-field col s12">' +
+        '<textarea id="lapordetail" name="lapor[detail]" class="materialize-textarea" required></textarea>' +
+        '<label for="lapordetail">Detail Permintaan</label>' +
+        '</div>' +
+        '<div class="input-field col s12 mb-20">' +
+        '<button type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
         '</div>' +
         '</div>' +
         '';
 
-    console.log(appendStr);
+    var resign = '' +
+        '<div id="templateContent">' +
+        '<div class="file-field input-field col s12 m6 l6">' +
+        '<input id="laporname" name="lapor[nama]" type="text" class="validate" required>' +
+        '<label for="laporname0">Nama SPV</label>' +
+        '</div>' +
+        '<div class="file-field input-field col s12 m6 l6">' +
+        '<input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" required>' +
+        '<label for="lapordivisi">Divisi SPV</label>' +
+        '</div>' +
+        '<div class="input-field col s12">' +
+        '<textarea id="lapordetail" name="lapor[detail]" class="materialize-textarea" placeholder="Jelaskan detail data anaknya.." required></textarea>' +
+        '<label for="lapordetail" class="active">Data Anak Resign</label>' +
+        '</div>' +
+        '<div class="input-field col s12 mb-20">' +
+        '<button type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
+        '</div>' +
+        '</div>' +
+        '';
+    if($(existingContent).length > 0){
+        $(existingContent).remove();
+    }
 
-    $("#addItemBlock").append(appendStr);
-
-    numFieldTrx++;
-
-    var remBtn = $('[name^=remItemButton]');
-
-    remBtn.removeClass('disabled');
-    remBtn.removeAttr('disabled');
-
-    remBtn.click(function () {
-        var numToRem = $(this).attr('id');
-        var elm = ".addItemContent"+ numToRem;
-
-        console.log(elm);
-
-        $(elm).remove();
-    });
-
+    switch ($(this).val()){
+        case 'Permintaan Perlengkapan & Akses Login Anak Baru' :
+            $(divBlock).append(newMember);
+            newUserBundle();
+            $(laporBody).addClass('almost-full');
+            break;
+        case 'Informasi Anak Resign' :
+            $(divBlock).append(resign);
+            $(laporBody).addClass('container');
+            break;
+        default :
+            $(divBlock).append(other);
+            $(laporBody).addClass('container');
+            break;
+    }
     $('select').material_select();
-});
-
-$(document).on('change', '[id=userPosition]', function() {
-    var selectValue = $(this).val();
-    var parentId = $(this).closest('.input-field').attr('id');
-    if (selectValue == 0){
-        $('#positionBlock').append('' +
-            ' <div id="0" class="userPositionText file-field input-field col s12 mb-20"> ' +
-                '<input id="userPositionText" name="user[0][position]" type="text" class="validate mb-10" required> ' +
-                '<label for="userPositionText">Jabatan</label> ' +
-                '<a name="cancelInputPosition" id=0 class="waves-effect btn red waves-light left">Cancel</a> ' +
-            '</div>' +
-            '');
-        $('.userPositionSelect').remove();
-    }
-});
-$(document).on('change', '[id=userDivision]', function() {
-    var selectValue = $(this).val();
-    var parentId = $(this).closest('.input-field').attr('id');
-    console.log(selectValue);
-    if (selectValue == 0){
-        $('#divisionBlock').append('' +
-            '<div id="0" class="userDivText file-field input-field col s12 mb-20">' +
-                '<input id="userDivisionText" name="user[0][division]" type="text" class="validate mb-10" required>' +
-                '<label for="userDivisionText">Divisi</label>' +
-                '<a name="cancelInputDivision" id=0 class="waves-effect btn red waves-light left">Cancel</a>' +
-            '</div>' +
-            '');
-        $('.userDivSelect').remove();
-    }
-});
-
-$(document).on('click', '[name=cancelInputDivision], [name=cancelInputPosition]', function() {
-    window.location = '/inventory/new-hire';
 });

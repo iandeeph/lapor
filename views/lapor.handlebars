@@ -3,7 +3,7 @@
 {{/section}}
 {{error}}
 
-<div class="row container">
+<div id="laporPageBody" class="row container">
     <form action="" method="post">
         <div class="col s12 mt-20">
             <div class="col s12 mb-30">
@@ -24,22 +24,10 @@
                 </select>
                 <label>Jenis Laporan</label>
             </div>
-            <div class="file-field input-field col s12 m6 l6">
-                <input id="laporname" name="lapor[nama]" type="text" class="validate" placeholder="Untuk jenis permintaan 'Penyediaan Anak Baru' harap diisi dengan nama SPV" required title="Untuk jenis permintaan 'Penyediaan Anak Baru' harap diisi dengan nama SPV dan nama anaknya dijelaskan di kolom detail">
-                <label for="laporname0">Nama</label>
-            </div>
-            <div class="file-field input-field col s12 m6 l6">
-                <input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" placeholder="Untuk jenis permintaan 'Penyediaan Anak Baru' harap diisi dengan divisi SPV" required title="Untuk jenis permintaan 'Penyediaan Anak Baru' harap diisi dengan divis SPV">
-                <label for="lapordivisi">Divisi</label>
-            </div>
-            <div class="input-field col s12">
-                <textarea id="lapordetail" name="lapor[detail]" class="materialize-textarea" placeholder="Masukan detail permintaan.
-Untuk jenis permintaan 'Anak Baru' harap sertakan SALAESCODE, NAMA & EMAIL PRIBADI ANAK BARU NYA.
-"></textarea>
-                <label for="lapordetail">Detail Permintaan</label>
-            </div>
-            <div class="input-field col s12 mb-20">
-                <button type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>
+            <div class="row">
+                <div class="col s12" id="templateBlock">
+
+                </div>
             </div>
             <div class="col s12">
                 <span class="font-20 green-text" id="message">{{message}}</span>
