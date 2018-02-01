@@ -140,6 +140,10 @@ td {
     margin-top: 70px !important;
 }
 
+.ml-auto{
+    margin-left: auto !important;
+}
+
 .ml-10{
     margin-left: 10px !important;
 }
@@ -555,6 +559,10 @@ div.valueLabel {
     font-size: 20px;
 }
 
+.font-30{
+    font-size: 30px;
+}
+
 .font-40{
     font-size: 40px;
 }
@@ -658,9 +666,19 @@ div.valueLabel {
 }
 
 .scrollable-80{
-    overflow-y: auto;
-    max-height: 80vh;
-}
+     overflow-y: auto;
+     max-height: 80vh;
+ }
+
+.scrollable-70{
+     overflow-y: auto;
+     max-height: 70vh;
+ }
+
+.scrollable-40{
+     overflow-y: auto;
+     max-height: 40vh;
+ }
 
 .scrollable-10{
     overflow-y: auto;

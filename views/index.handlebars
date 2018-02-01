@@ -8,22 +8,24 @@
         <div class="col s12 m6 l4">
             <div class="row">
                 <div class="col s12 center">
-                    <span class="font-40">Daftar Antrian Hari Ini</span>
+                    <span class="font-30">Daftar Antrian Hari Ini</span>
                 </div>
+            </div>
+            <div class="row scrollable-70">
                 <div class="col s12 center">
                     <a class="btn-floating btn waves-effect waves-light white-text light-green" title="Tambah Antrian" href="/lapor"><i class="material-icons">add</i></a>
                 </div>
-            </div>
-            <div class="row">
-                <div class="col s12 scrollable-80">
+                <div class="col s12">
                     <ul class="collection">
                         {{#each layoutTemplate}}
-                            <li class="collection-item avatar" title="{{detail}}">
-                                <i class="circle">{{noAntrian}}</i>
-                                <span class="title">{{jenis}}</span>
-                                <p>{{dateTime tanggalBuat}}</p>
-                                <p>{{nama}} - {{divisi}}</p>
-                            </li>
+                            {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="!="}}
+                                <li class="collection-item avatar" title="{{detail}}">
+                                    <i class="circle {{warna}}">{{noAntrian}}</i>
+                                    <span class="title">{{jenis}}</span>
+                                    <p>{{dateTime tanggalBuat}}</p>
+                                    <p>{{nama}} - {{divisi}}</p>
+                                </li>
+                            {{/compare}}
                         {{/each}}
                     </ul>
                 </div>
@@ -32,37 +34,42 @@
         <div class="col s12 m6 l4">
             <div class="row">
                 <div class="col s12 center">
-                    <span class="font-40">Yang Sedang Dikerjakan</span>
+                    <span class="font-30">Yang Sedang Dikerjakan</span>
                 </div>
             </div>
-            <div class="row">
+            <div class="row scrollable-70">
                 {{#each layoutPekerja}}
-                    {{#isEmpty this}}
-                        <div class="col s12">
-                            <span class="font-20 bold">{{@key}}</span>
-                        </div>
-                        <div class="col s12">
-                            <ul class="collection">
-                                {{#each this}}
-                                    <li class="collection-item avatar" title="{{detail}}">
-                                        <i class="circle">{{this.noAntrian}}</i>
-                                        <span class="title">{{nama}} - {{divisi}}</span>
-                                        <p>{{dateTime tanggalBuat}}</p>
-                                        <p>{{jenis}}</p>
-                                        <p>Status : {{catatan}}</p>
-                                        <span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>
-                                    </li>
-                                {{/each}}
-                            </ul>
-                        </div>
-                    {{/isEmpty}}
+                    {{#each this}}
+                        {{#isEmpty this}}
+                            <div class="col s12">
+                                <span class="font-20 bold">{{@key}}</span>
+                            </div>
+                            <div class="col s12">
+                                <ul class="collection">
+                                    {{#each this}}
+                                        {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="!="}}
+                                            <li class="collection-item avatar" title="{{detail}}">
+                                                <span class="admin-stat badge white-text blue">{{status}}</span>
+                                                <i class="circle {{warna}}">{{this.noAntrian}}</i>
+                                                <span class="title">{{nama}} - {{divisi}}</span>
+                                                <p>{{dateTime tanggalBuat}}</p>
+                                                <p>{{jenis}}</p>
+                                                <p>Status : {{catatan}}</p>
+                                                <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
+                                            </li>
+                                        {{/compare}}
+                                    {{/each}}
+                                </ul>
+                            </div>
+                        {{/isEmpty}}
+                    {{/each}}
                 {{/each}}
             </div>
         </div>
         <div class="col s12 m12 l4">
             <div class="row">
                 <div class="col s12 center">
-                    <span class="font-40">Yang Sudah Dikerjakan</span>
+                    <span class="font-30">Yang Sudah Dikerjakan</span>
                 </div>
             </div>
             <div class="row">
@@ -70,11 +77,11 @@
                     <div class="col s12 center-align">
                         <span class="font-20 bold">{{@key}}</span>
                     </div>
-                    <div class="col s12 scrollable-80">
+                    <div class="col s12 scrollable-70">
                         <ul class="collection">
                             {{#each this}}
                                 <li class="collection-item avatar" title="{{detail}}">
-                                    <i class="circle material-icons">done</i>
+                                    <i class="circle {{warna}} material-icons">done</i>
                                     <span class="title">{{jenis}}</span>
                                     <p>{{dateTime tanggalSelesai}}</p>
                                     <p>{{nama}} - {{divisi}}</p>
@@ -83,6 +90,116 @@
                             {{/each}}
                         </ul>
                     </div>
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</div>
+<!--=================================================================================================================================-->
+<div class="row almost-full">
+    <div class="col s12 mt-20">
+        <div class="col s12 border-bottom"></div>
+        <div class="col s12 center">
+            <span class="font-30">Untuk Permintaan Anak Baru</span>
+        </div>
+        <div class="col s12 border-bottom mb-20"></div>
+        <div class="col s12 m6 l4">
+            <div class="row">
+                <div class="col s12">
+                    <span class="font-30 valign-wrapper">Antrian Permintaan Anak Baru<i class="large material-icons blue-text">keyboard_arrow_right</i></span>
+                </div>
+            </div>
+            <div class="row scrollable-70">
+                <div class="col s12 center">
+                    <a class="btn-floating btn waves-effect waves-light white-text light-green" title="Tambah Antrian" href="/lapor"><i class="material-icons">add</i></a>
+                </div>
+                <div class="col s12">
+                    <ul class="collection">
+                        {{#each layoutTemplate}}
+                            {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="=="}}
+                                <li class="collection-item avatar" title="{{detail}}">
+                                    <i class="circle {{warna}}">{{noAntrian}}</i>
+                                    <span class="title">{{jenis}}</span>
+                                    <p>{{dateTime tanggalBuat}}</p>
+                                    <p>{{nama}} - {{divisi}}</p>
+                                </li>
+                            {{/compare}}
+                        {{/each}}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="col s12 m6 l4">
+            <div class="row">
+                <div class="col s12 center">
+                    <span class="font-30 valign-wrapper">Laptop Sedang Disiapkan<i class="large material-icons blue-text">keyboard_arrow_right</i></span>
+                </div>
+            </div>
+            <div class="row scrollable-70">
+                {{#each layoutPekerja}}
+                    {{#compare @key 2 operator="=="}}
+                        {{#each this}}
+                            {{#isEmpty this}}
+                                <div class="col s12">
+                                    <span class="font-20 bold">{{@key}}</span>
+                                </div>
+                                <div class="col s12">
+                                    <ul class="collection">
+                                        {{#each this}}
+                                            {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="=="}}
+                                                    <li class="collection-item avatar" title="{{detail}}">
+                                                        <span class="admin-stat badge white-text blue">{{status}}</span>
+                                                        <i class="circle {{warna}}">{{this.noAntrian}}</i>
+                                                        <span class="title">{{nama}} - {{divisi}}</span>
+                                                        <p>{{dateTime tanggalBuat}}</p>
+                                                        <p>{{jenis}}</p>
+                                                        <p>Status : {{catatan}}</p>
+                                                        <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
+                                                    </li>
+                                            {{/compare}}
+                                        {{/each}}
+                                    </ul>
+                                </div>
+                            {{/isEmpty}}
+                        {{/each}}
+                    {{/compare}}
+                {{/each}}
+            </div>
+        </div>
+        <div class="col s12 m12 l4">
+            <div class="row">
+                <div class="col s12 center">
+                    <span class="font-30 valign-wrapper">Akses Sedang Disiapkan<i class="large material-icons transparent-text">keyboard_arrow_right</i></span>
+                </div>
+            </div>
+            <div class="row scrollable-70">
+                {{#each layoutPekerja}}
+                    {{#compare @key 1 operator="=="}}
+                        {{#each this}}
+                            {{#isEmpty this}}
+                                <div class="col s12">
+                                    <span class="font-20 bold">{{@key}}</span>
+                                </div>
+                                <div class="col s12">
+                                    <ul class="collection">
+                                        {{#each this}}
+                                            {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="=="}}
+                                                <li class="collection-item avatar" title="{{detail}}">
+                                                    <span class="admin-stat badge white-text blue">{{status}}</span>
+                                                    <i class="circle {{warna}}">{{this.noAntrian}}</i>
+                                                    <span class="title">{{nama}} - {{divisi}}</span>
+                                                    <p>{{dateTime tanggalBuat}}</p>
+                                                    <p>{{jenis}}</p>
+                                                    <p>Status : {{catatan}}</p>
+                                                    <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
+                                                </li>
+                                            {{/compare}}
+                                        {{/each}}
+                                    </ul>
+                                </div>
+                            {{/isEmpty}}
+                        {{/each}}
+                    {{/compare}}
                 {{/each}}
             </div>
         </div>

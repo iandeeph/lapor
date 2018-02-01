@@ -23,11 +23,11 @@ function newUserBundle(){
     $(document).on('change', 'select[id^=detailPilihAkses]', function() {
         var selectVal = $(this).val();
         $(this).parent('div').parent('div').parent('div').find('input[id^=detailSalesCode], input[id^=detailZohoRole], input[id^=detailPortalRole]').attr('disabled',true).addClass('disabled');
-        if(jQuery.inArray('1',selectVal) !== -1 && jQuery.inArray('2',selectVal) !== -1){
+        if(jQuery.inArray('Zoho',selectVal) !== -1 && jQuery.inArray('Portal',selectVal) !== -1){
             $(this).parent('div').parent('div').parent('div').find('input[id^=detailSalesCode], input[id^=detailZohoRole], input[id^=detailPortalRole]').attr('disabled',false).removeClass('disabled');
-        }else if(jQuery.inArray('1',selectVal) !== -1 && jQuery.inArray('2',selectVal) == -1) {
+        }else if(jQuery.inArray('Zoho',selectVal) !== -1 && jQuery.inArray('Portal',selectVal) == -1) {
             $(this).parent('div').parent('div').parent('div').find('input[id^=detailZohoRole]').attr('disabled',false).removeClass('disabled');
-        }else if(jQuery.inArray('1',selectVal) == -1 && jQuery.inArray('2',selectVal) !== -1) {
+        }else if(jQuery.inArray('Zoho',selectVal) == -1 && jQuery.inArray('Portal',selectVal) !== -1) {
             $(this).parent('div').parent('div').parent('div').find('input[id^=detailSalesCode],input[id^=detailPortalRole]').attr('disabled',false).removeClass('disabled');
         }else{
             $(this).parent('div').parent('div').parent('div').find('input[id^=detailSalesCode], input[id^=detailZohoRole], input[id^=detailPortalRole]').attr('disabled',true).addClass('disabled');
@@ -59,12 +59,12 @@ function newUserBundle(){
             '<div class="input-field col s12 l3">' +
             '<select id="detailPilihAkses'+ userNum +'" name="detail['+ userNum +'][akses]" multiple required>' +
             '<option value="" disabled selected>Pilih Akses yang Dibutuhkan</option>' +
-            '<option value="1">Zoho</option>' +
-            '<option value="2">Portal</option>' +
-            '<option value="3">Telpon</option>' +
-            '<option value="4">Email Cermati</option>' +
-            '<option value="5">Keystone</option>' +
-            '<option value="6">Basecamp</option>' +
+            '<option value="Zoho">Zoho</option>' +
+            '<option value="Portal">Portal</option>' +
+            '<option value="Telpon">Telpon</option>' +
+            '<option value="Email Cermati">Email Cermati</option>' +
+            '<option value="Keystone">Keystone</option>' +
+            '<option value="Basecamp">Basecamp</option>' +
             '</select>' +
             '<label for="detailPilihAkses'+ userNum +'">Kebutuhan Akses</label>' +
             '</div>' +
@@ -134,7 +134,7 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '<label for="detailEmail0">Email Pribadi</label>' +
         '</div>' +
         '<div class="input-field col s12 m6 l3">' +
-        '<input id="detailDivisi0" name="detail[0][divsi]" type="text" class="validate" required>' +
+        '<input id="detailDivisi0" name="detail[0][divisi]" type="text" class="validate" required>' +
         '<label for="detailDivisi0">Divisi User</label>' +
         '</div>' +
         '<div class="input-field col s12 m6 l3">' +
@@ -144,12 +144,12 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '<div class="input-field col s12 l3">' +
         '<select id="detailPilihAkses0" name="detail[0][akses]" multiple required>' +
         '<option value="" disabled selected>Pilih Akses yang Dibutuhkan</option>' +
-        '<option value="1">Zoho</option>' +
-        '<option value="2">Portal</option>' +
-        '<option value="3">Telpon</option>' +
-        '<option value="4">Email Cermati</option>' +
-        '<option value="5">Keystone</option>' +
-        '<option value="6">Basecamp</option>' +
+        '<option value="Zoho">Zoho</option>' +
+        '<option value="Portal">Portal</option>' +
+        '<option value="Telpon">Telpon</option>' +
+        '<option value="Email Cermati">Email Cermati</option>' +
+        '<option value="Keystone">Keystone</option>' +
+        '<option value="Basecamp">Basecamp</option>' +
         '</select>' +
         '<label for="detailPilihAkses0">Kebutuhan Akses</label>' +
         '</div>' +
@@ -176,7 +176,7 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '</div>' +
         '</div>' +
         '<div class="input-field col s12 mb-20">' +
-        '<button type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
+        '<button type="submit" value="newMember" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
         '</div>' +
         '</div>' +
         "";
@@ -209,7 +209,7 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '<label for="lapordetail">Detail Permintaan</label>' +
         '</div>' +
         '<div class="input-field col s12 mb-20">' +
-        '<button type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
+        '<button type="submit" value="other" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
         '</div>' +
         '</div>' +
         '';
@@ -229,7 +229,7 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '<label for="lapordetail" class="active">Data Anak Resign</label>' +
         '</div>' +
         '<div class="input-field col s12 mb-20">' +
-        '<button type="submit" value="Kirim" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
+        '<button type="submit" value="resign" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
         '</div>' +
         '</div>' +
         '';
