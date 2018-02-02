@@ -38,8 +38,8 @@ function newUserBundle(){
     $('#btnAddUser').click(function() {
         var divBlock = $('#newUserBlock');
         var userContent = '' +
-            '<div class="col s12 border-bottom mt-20"></div>' +
             '<div class="addedUserContent'+ userNum +'">' +
+            '<div class="col s12 border-bottom mt-20"></div>' +
             '<div class="input-field col s12 m6 l3">' +
             '<input id="detailNama0" name="detail['+ userNum +'][nama]" type="text" class="validate" required>' +
             '<label for="detailNama0">Nama User</label>' +
@@ -84,9 +84,9 @@ function newUserBundle(){
             '<textarea id="detailCatatan'+ userNum +'" name="detail['+ userNum +'][catatan]" class="materialize-textarea"></textarea>' +
             '<label for="detailCatatan'+ userNum +'">Catatan Tambahan (Opsional)</label>' +
             '</div>' +
-            '</div>' +
             '<div class="col s12 right">' +
             '<a name="btnDelUser" id="'+ userNum +'" class="btn waves-effect waves-light white-text red right" title="Hapus User">Hapus User</a>' +
+            '</div>' +
             '</div>' +
             '';
         $(divBlock).append(userContent);
