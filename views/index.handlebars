@@ -81,11 +81,12 @@
                         <ul class="collection">
                             {{#each this}}
                                 <li class="collection-item avatar" title="{{detail}}">
+                                    <span class="admin-stat badge white-text blue">{{status}}</span>
                                     <i class="circle {{warna}} material-icons">done</i>
                                     <span class="title">{{jenis}}</span>
                                     <p>{{dateTime tanggalSelesai}}</p>
                                     <p>{{nama}} - {{divisi}}</p>
-                                    <span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>
+                                    <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
                                 </li>
                             {{/each}}
                         </ul>
