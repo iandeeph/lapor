@@ -18,7 +18,7 @@
                             {{#each layoutTemplate}}
                                 <li>
                                     <div class="collapsible-header">
-                                        <i class="circle">{{noAntrian}}</i>{{nama}} ({{divisi}}) - {{jenis}}
+                                        <i class="circle {{warna}} white-text">{{noAntrian}}</i>{{nama}} ({{divisi}}) - {{jenis}}
                                     </div>
                                     <div class="collapsible-body">
                                         <p>Tanggal Buat : {{dateTime tanggalBuat}}</p>
@@ -65,7 +65,7 @@
                                         {{#each this}}
                                             <li>
                                                 <div class="collapsible-header">
-                                                    <i class="circle">{{noAntrian}}</i> {{nama}} ({{divisi}}) - {{jenis}}
+                                                    <i class="circle {{warna}} white-text">{{noAntrian}}</i> {{nama}} ({{divisi}}) - {{jenis}}
                                                     <span class="admin-stat badge white-text blue">{{status}}</span>
                                                 </div>
                                                 <div class="collapsible-body">

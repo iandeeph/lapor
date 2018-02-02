@@ -51,9 +51,24 @@ router.get('/', function(req, res, next) {
     }else {
         var layoutAntrian = [];
         var layoutPekerja = {};
+        var tomorrow = moment().subtract(1,'d');
+        var afterTomorrow = moment().subtract(2,'d');
         var loginUser = req.session.name;
         var privUser = req.session.priv;
         var classification;
+        var color = "";
+
+        function warnaAntrian(tanggal){
+            if(moment(tanggal) <= afterTomorrow){
+                color = "red"
+            }else if(moment(tanggal) < tomorrow){
+                color = "orange"
+            }else{
+                color = "green darken-3"
+            }
+
+            return color;
+        }
         laporanConn.query("SELECT * FROM laporan ORDER BY noantrian")
             .then(function (result) {
                 //console.log(result);
@@ -81,6 +96,7 @@ router.get('/', function(req, res, next) {
                             "tanggalBuat": antrianItem[key].tanggalBuat,
                             "detail" : antrianItem[key].detail,
                             "idLaporan" : antrianItem[key].idlaporan,
+                            "warna" : warnaAntrian(antrianItem[key].tanggalBuat),
                             "classification" : classification
                         };
                     });
@@ -113,6 +129,7 @@ router.get('/', function(req, res, next) {
                                                         "nama":rowPekerja.nama,
                                                         "divisi":rowPekerja.divisi,
                                                         "tanggalBuat":rowPekerja.tanggalBuat,
+                                                        "warna":warnaAntrian(rowPekerja.tanggalBuat),
                                                         "assign":rowPekerja.assign,
                                                         "catatan":rowPekerja.catatan,
                                                         "status":rowPekerja.status,
