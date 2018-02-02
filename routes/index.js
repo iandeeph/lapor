@@ -258,6 +258,9 @@ router.post('/lapor', function(req, res, next) {
                         "Divisi Anak : "+ rowDetail.divisi +"\r\n" +
                         "Jabatan Anak : "+ rowDetail.jabatan +"\r\n" +
                         "Kebutuhan Akses : "+ rowDetail.akses.toString() +"\r\n" +
+                        "Salescode : "+ rowDetail.salesCode +"\r\n" +
+                        "Zoho Role : "+ rowDetail.zohoRole +"\r\n" +
+                        "Portal Role : "+ rowDetail.portalRole +"\r\n" +
                         "Catatan Tambahan : "+ rowDetail.catatan +"\r\n\r\n";
                     //arrayDetail.push(JSON.stringify(rowDetail));
                     arrayDetail.push(detailText.toString());

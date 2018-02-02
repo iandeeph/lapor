@@ -49,7 +49,7 @@ function newUserBundle(){
             '<label for="detailEmail'+ userNum +'">Email Pribadi</label>' +
             '</div>' +
             '<div class="input-field col s12 m6 l3">' +
-            '<input id="detailDivisi'+ userNum +'" name="detail['+ userNum +'][divsi]" type="text" class="validate" required>' +
+            '<input id="detailDivisi'+ userNum +'" name="detail['+ userNum +'][divisi]" type="text" class="validate" required>' +
             '<label for="detailDivisi'+ userNum +'">Divisi User</label>' +
             '</div>' +
             '<div class="input-field col s12 m6 l3">' +
