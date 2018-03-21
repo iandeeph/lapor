@@ -237,10 +237,10 @@ router.post('/', function(req, res, next) {
 /* GET timeline page. */
 router.get('/workflow', function(req, res, next) {
     var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
-    //if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
-    //    console.log("Not Logged");
-    //    res.redirect('/portal-auth');
-    //}else {
+    if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
+        console.log("Not Logged");
+        res.redirect('/portal-auth');
+    }else {
         var layoutTemplate = {};
         var timelineQry= "SELECT *, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated FROM laporan WHERE status = 'Done' AND resolve ='TRUE' ORDER BY tanggalSelesai DESC ";
         laporanConn.query(timelineQry)
@@ -275,8 +275,19 @@ router.get('/workflow', function(req, res, next) {
                 //logs out the error
                 console.error(error);
             });
-    //}
+    }
+});
 
+/* GET logout page. */
+router.get('/logout', function(req, res) {
+    if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
+        console.log("Not Logged");
+        res.redirect('/portal-auth');
+    }else {
+        req.session.destroy(function(err) {
+            res.redirect('/portal-auth');
+        })
+    }
 });
 
 module.exports = router;
