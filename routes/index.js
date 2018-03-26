@@ -55,8 +55,8 @@ router.get('/', function(req, res, next) {
     var color = "";
 
     function warnaAntrian(tanggal){
-        console.log("tanggal = "+moment(tanggal));
-        console.log("tomorrow = "+tomorrow);
+        //console.log("tanggal = "+moment(tanggal));
+        //console.log("tomorrow = "+tomorrow);
         if(moment(tanggal) <= afterTomorrow){
             color = "red"
         }else if(moment(tanggal) < tomorrow){
