@@ -31,9 +31,6 @@
                                                     <button type="submit" value="kerjakan" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10">Kerjakan</button>
                                                 {{/compare}}
                                                 {{#compare classification "2" operator="=="}}
-                                                    <button type="submit" value="kerjakan" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10">Kerjakan</button>
-                                                {{/compare}}
-                                                {{#compare classification "3" operator="=="}}
                                                     <button type="submit" value="kerjakan" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10  disabled" disabled>Kerjakan</button>
                                                 {{/compare}}
                                             </form>
@@ -79,6 +76,7 @@
                                                             {{#compare assign loginUser operator="=="}}
                                                                 <input type="hidden" value="{{idAssign}}" name="idAssign"/>
                                                                 <input type="hidden" value="{{idLaporan}}" name="idLaporan"/>
+                                                                <input type="hidden" value="{{jenis}}" name="jenis"/>
                                                                 <button type="submit" value="selesai" name="laporsubmit" id="{{idLaporan}}" class="waves-effect waves-light btn blue darken-3 right ml-10">Selesai</button>
                                                                 <a value="update" class="waves-effect waves-light blue darken-3 right ml-10 btn modal-trigger" href="#modalUpdate{{idLaporan}}">Update Status</a>
                                                             {{else}}

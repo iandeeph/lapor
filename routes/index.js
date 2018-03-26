@@ -203,7 +203,8 @@ router.get('/lapor', function(req, res, next) {
 router.post('/lapor', function(req, res, next) {
     var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
     var arrayQueryValue = [];
-    var arrayDetail = [];
+    var arrayDetailIT = [];
+    var arrayDetailGA = [];
     var nama = "";
     var divisi = "";
     var jenis = "";
@@ -216,9 +217,7 @@ router.post('/lapor', function(req, res, next) {
 
     laporanConn.query("select max(noantrian) noantrian from laporan where resolve = 'FALSE' AND status != 'Done' limit 1")
         .then(function(result) {
-
             if (req.body.laporsubmit == "newMember"){
-                var postDetail = req.body.detail || {};
                 //EXAMPLE RESULT
                 //{
                 //   lapor:{
@@ -246,14 +245,15 @@ router.post('/lapor', function(req, res, next) {
                 //     laporsubmit: 'Kirim'
                 //}
 
-                nama = postLapor.nama;
-                divisi = postLapor.divisi;
-                jenis = postLapor.jenis;
+                var postDetail = req.body.detail || {};
+                nama = postLapor.nama || {};
+                divisi = postLapor.divisi || {};
+                jenis = postLapor.jenis || {};
                 status = "On Queue";
                 noantrian = _.isNull(result[0].noantrian)? 1 : parseInt(result[0].noantrian) + 1;
 
                 return Promise.each(postDetail, function (rowDetail) {
-                    var detailText  = "Nama Anak : "+ rowDetail.nama +"\r\n" +
+                    var detailTextIT  = "Nama Anak : "+ rowDetail.nama +"\r\n" +
                         "Email Pribadi : "+ rowDetail.email +"\r\n" +
                         "Divisi Anak : "+ rowDetail.divisi +"\r\n" +
                         "Jabatan Anak : "+ rowDetail.jabatan +"\r\n" +
@@ -263,11 +263,20 @@ router.post('/lapor', function(req, res, next) {
                         "Portal Role : "+ rowDetail.portalRole +"\r\n" +
                         "Catatan Tambahan : "+ rowDetail.catatan +"\r\n\r\n";
                     //arrayDetail.push(JSON.stringify(rowDetail));
-                    arrayDetail.push(detailText.toString());
+                    arrayDetailIT.push(detailTextIT.toString());
+
+                    var detailTextGA  = "Nama Anak : "+ rowDetail.nama +"\r\n" +
+                        "Email Pribadi : "+ rowDetail.email +"\r\n" +
+                        "Divisi Anak : "+ rowDetail.divisi +"\r\n" +
+                        "Jabatan Anak : "+ rowDetail.jabatan +"\r\n" +
+                        "Catatan Tambahan : "+ rowDetail.catatan +"\r\n\r\n";
+                    //arrayDetail.push(JSON.stringify(rowDetail));
+                    arrayDetailGA.push(detailTextGA.toString());
 
                 }).then(function () {
                     //laporan: idlaporan, noantrian, nama, divisi, jenis, detail. status, resolve, tanggalBuat
-                    arrayQueryValue.push([noantrian, nama, divisi, jenis, arrayDetail.toString(),status, dateNow]);
+                    arrayQueryValue.push([noantrian, nama, divisi, "Permintaan Perlengkapan Anak Baru", arrayDetailGA.toString(),status, dateNow]);
+                    arrayQueryValue.push([(noantrian+1), nama, divisi, "Permintaan Akses Login Anak Baru", arrayDetailIT.toString(),status, dateNow]);
                     queryString = "INSERT INTO db_portal_it.laporan " +
                         "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat) " +
                         "VALUES ?";
@@ -297,6 +306,7 @@ router.post('/lapor', function(req, res, next) {
 
                 //laporan: idlaporan, noantrian, nama, divisi, jenis, detail. status, resolve, tanggalBuat
                 arrayQueryValue.push([noantrian, nama, divisi, jenis, detail,status, dateNow]);
+                arrayQueryValue.push([(noantrian+1), nama, divisi, "Permohonan Hapus Akses (resign)", detail,status, dateNow]);
                 queryString = "INSERT INTO db_portal_it.laporan " +
                     "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat) " +
                     "VALUES ?";

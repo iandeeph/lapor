@@ -79,14 +79,14 @@ router.get('/', function(req, res, next) {
                 resultPromise.then(function(antrianItem) {
                     //console.log(antrianItem);
                     Object.keys(antrianItem).forEach(function (key) {
-                        if((antrianItem[key].jenis == "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis == "Informasi Anak Resign") && privUser == "2"){
+                        if((antrianItem[key].jenis == "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis == "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis == "Informasi Anak Resign") && privUser == "2"){
                             classification = "1";
-                        }else if((antrianItem[key].jenis == "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis == "Informasi Anak Resign") && privUser == "1"){
-                            classification = "3";
-                        }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "2"){
-                            classification = "3";
-                        }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "1"){
+                        }else if((antrianItem[key].jenis == "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis == "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis == "Informasi Anak Resign") && privUser == "1"){
                             classification = "2";
+                        }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "2"){
+                            classification = "2";
+                        }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "1"){
+                            classification = "1";
                         }
                         layoutAntrian[key] = {
                             "noAntrian": antrianItem[key].noantrian,
@@ -110,7 +110,7 @@ router.get('/', function(req, res, next) {
                                 }));
                             });
                             promisePekerja.then(function(resultPekerja) {
-                                console.log(resultPekerja);
+                                //console.log(resultPekerja);
                                 laporanConn.query("select nama from admin where nama != 'Oby Sumampouw' order by nama")
                                     .then(function(adminResult) {
                                         var groupedAssign = _.groupBy(adminResult, 'nama');
@@ -139,7 +139,7 @@ router.get('/', function(req, res, next) {
                                                         "loginUser":loginUser
                                                     };
                                                 }).then(function(b){
-                                                    console.log(layoutPekerja);
+                                                    //console.log(layoutPekerja);
                                                     res.render('admin-index', {
                                                         layout: "admin",
                                                         layoutTemplate: a,
@@ -192,6 +192,7 @@ router.post('/', function(req, res, next) {
         var idAssign = req.session.priv || {};
         var idLaporan = req.body.idLaporan || {};
         var laporsubmit = req.body.laporsubmit || {};
+        var jenis = req.body.jenis || {};
         var laporUpdate = req.body.laporStatus || {};
         if(laporsubmit == "kerjakan"){
             updateQry = "UPDATE db_portal_it.laporan SET " +
@@ -199,16 +200,28 @@ router.post('/', function(req, res, next) {
                 "assign = '"+loginUser+"', " +
                 "tanggalAssign = '"+dateNow+"' " +
                 "WHERE idlaporan = '"+idKerjakan+"' ";
-        }else if(laporsubmit == "selesai" && idAssign == "1"){
+        }else if(laporsubmit == "selesai"){
             updateQry = "UPDATE db_portal_it.laporan SET " +
                 "status = 'Done', " +
                 "resolve = 'TRUE', " +
                 "tanggalSelesai = '"+dateNow+"' " +
                 "WHERE idlaporan = '"+idLaporan+"' ";
-        }else if(laporsubmit == "selesai" && idAssign == "2"){
-            updateQry = "UPDATE db_portal_it.laporan SET " +
-                "status = 'Done' " +
-                "WHERE idlaporan = '"+idLaporan+"' ";
+        //}else if(laporsubmit == "selesai" && idAssign == "1"){
+        //    updateQry = "UPDATE db_portal_it.laporan SET " +
+        //        "status = 'Done', " +
+        //        "resolve = 'TRUE', " +
+        //        "tanggalSelesai = '"+dateNow+"' " +
+        //        "WHERE idlaporan = '"+idLaporan+"' ";
+        //}else if(laporsubmit == "selesai" && idAssign == "2" && jenis != "Permintaan Pergantian Perangkat (mouse rusak, laptop error, dll)"){
+        //    updateQry = "UPDATE db_portal_it.laporan SET " +
+        //        "status = 'Done' " +
+        //        "WHERE idlaporan = '"+idLaporan+"' ";
+        //}else if(laporsubmit == "selesai" && idAssign == "2" && jenis == "Permintaan Pergantian Perangkat (mouse rusak, laptop error, dll)"){
+        //    updateQry = "UPDATE db_portal_it.laporan SET " +
+        //        "status = 'Done', " +
+        //        "resolve = 'TRUE', " +
+        //        "tanggalSelesai = '"+dateNow+"' " +
+        //        "WHERE idlaporan = '"+idLaporan+"' ";
         }else if(laporsubmit == "update"){
             updateQry = "UPDATE db_portal_it.laporan SET " +
                 "catatan = '"+laporUpdate+"' " +
