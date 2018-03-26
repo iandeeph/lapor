@@ -7,7 +7,7 @@ var crypto          = require('crypto');
 
 //source : http://stackoverflow.com/questions/20210522/nodejs-mysql-error-connection-lost-the-server-closed-the-connection
 var db_config = {
-    host         : '1.1.1.200',
+    host         : 'localhost',
     user         : 'root',
     password     : 'c3rmat',
     insecureAuth : 'true',

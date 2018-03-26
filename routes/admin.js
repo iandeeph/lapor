@@ -110,6 +110,7 @@ router.get('/', function(req, res, next) {
                                 }));
                             });
                             promisePekerja.then(function(resultPekerja) {
+                                console.log(resultPekerja);
                                 laporanConn.query("select nama from admin where nama != 'Oby Sumampouw' order by nama")
                                     .then(function(adminResult) {
                                         var groupedAssign = _.groupBy(adminResult, 'nama');
@@ -138,7 +139,7 @@ router.get('/', function(req, res, next) {
                                                         "loginUser":loginUser
                                                     };
                                                 }).then(function(b){
-                                                    //console.log(a);
+                                                    console.log(layoutPekerja);
                                                     res.render('admin-index', {
                                                         layout: "admin",
                                                         layoutTemplate: a,
@@ -242,7 +243,7 @@ router.get('/workflow', function(req, res, next) {
         res.redirect('/portal-auth');
     }else {
         var layoutTemplate = {};
-        var timelineQry= "SELECT *, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated FROM laporan WHERE status = 'Done' AND resolve ='TRUE' ORDER BY tanggalSelesai DESC ";
+        var timelineQry= "SELECT *, laporan.nama nama, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated FROM laporan left join admin on laporan.assign = admin.nama WHERE status = 'Done' AND resolve ='TRUE' ORDER BY tanggalSelesai DESC";
         laporanConn.query(timelineQry)
             .then(function(timelineResQry) {
                 var groupedDate = _.groupBy(timelineResQry, 'doneDateFormated');
@@ -259,6 +260,7 @@ router.get('/workflow', function(req, res, next) {
                             "divisi":rowTimeline.divisi,
                             "tanggalBuat":rowTimeline.tanggalBuat,
                             "assign":rowTimeline.assign,
+                            "division":rowTimeline.division,
                             "status":rowTimeline.status,
                             "idLaporan":rowTimeline.idlaporan,
                             "detail":rowTimeline.detail
