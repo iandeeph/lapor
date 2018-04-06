@@ -1,12 +1,19 @@
-
-
 $(document).ready(function() {
-    $(".button-collapse").sideNav();
+    $(".sidenav").sidenav();
     $('.collapsible').collapsible(
         {hover: false}
     );
     $('.tabs').tabs();
-    $('select').material_select();
+    $('select').formSelect();
+    $('.datepicker').datepicker({
+        selectMonths: true, // Creates a dropdown to control month
+        selectYears: 15, // Creates a dropdown of 15 years to control year,
+        today: 'Today',
+        clear: 'Clear',
+        close: 'Ok',
+        autoClose: true,
+        closeOnSelect: true // Close upon selecting a date,
+    });
     $('.tooltipped').tooltip({delay: 50});
 
     $('.modal').modal({
@@ -18,6 +25,20 @@ $(document).ready(function() {
             endingTop: '10%' // Ending top style attribute
         }
     );
+
+    $("#downloadCsv").click(function () {
+        var $table = "";
+        if ($("#checkDetail").prop('checked')) {
+            $table = $("#detailTable");
+        }else{
+            $table = $("#rekapTable");
+        }
+        var csv = $table.table2CSV({
+            delivery: 'value'
+        });
+        window.location.href = 'data:text/csv;charset=UTF-8,'
+            + encodeURIComponent(csv);
+    });
 });
 
 function newUserBundle(){
@@ -42,11 +63,11 @@ function newUserBundle(){
             '<div class="addedUserContent'+ userNum +'">' +
             '<div class="col s12 border-bottom mt-20"></div>' +
             '<div class="input-field col s12 m6 l3">' +
-            '<input id="detailNama0" name="detail['+ userNum +'][nama]" type="text" class="validate" required>' +
-            '<label for="detailNama0">Nama User</label>' +
+            '<input id="detailNama'+ userNum +'" name="detail['+ userNum +'][nama]" type="text" class="validate" required>' +
+            '<label for="detailNama'+ userNum +'">Nama User</label>' +
             '</div>' +
             '<div class="input-field col s12 m6 l3">' +
-            '<input id="detailEmail0" name="detail['+ userNum +'][email]" type="email" class="validate" required>' +
+            '<input id="detailEmail'+ userNum +'" name="detail['+ userNum +'][email]" type="email" class="validate" required>' +
             '<label for="detailEmail'+ userNum +'">Email Pribadi</label>' +
             '</div>' +
             '<div class="input-field col s12 m6 l3">' +
@@ -64,6 +85,7 @@ function newUserBundle(){
             '<option value="Portal">Portal</option>' +
             '<option value="Telpon">Telpon</option>' +
             '<option value="Email Cermati">Email Cermati</option>' +
+            '<option value="Email Indodana">Email Indodana</option>' +
             '<option value="Keystone">Keystone</option>' +
             '<option value="Basecamp">Basecamp</option>' +
             '</select>' +
@@ -91,7 +113,7 @@ function newUserBundle(){
             '</div>' +
             '';
         $(divBlock).append(userContent);
-        $('select').material_select();
+        $('select').formSelect();
         userNum++;
 
         $('[name^=btnDelUser]').click(function () {
@@ -149,6 +171,7 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '<option value="Portal">Portal</option>' +
         '<option value="Telpon">Telpon</option>' +
         '<option value="Email Cermati">Email Cermati</option>' +
+        '<option value="Email Indodana">Email Indodana</option>' +
         '<option value="Keystone">Keystone</option>' +
         '<option value="Basecamp">Basecamp</option>' +
         '</select>' +
@@ -195,6 +218,8 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '<select id="lokasi" name="lapor[lokasi]" required>' +
         '<option value="" disabled selected>Pilih Lokasi</option>' +
         '<option value="Daan Mogot">Daan Mogot</option>' +
+        '<option value="Bandung">Bandung</option>' +
+        '<option value="Surabaya">Surabaya</option>' +
         '<option value="Kedoya 1">Kedoya 1</option>' +
         '<option value="Kedoya 2">Kedoya 2</option>' +
         '<option value="Kedoya 3">Kedoya 3</option>' +
@@ -253,5 +278,15 @@ $(document).on('change', 'select[id=laporjenis]', function() {
             $(laporBody).addClass('container');
             break;
     }
-    $('select').material_select();
+    $('select').formSelect();
+
+});
+$(document).on('change', 'input[id^=checkDetail]', function() {
+    if ($(this).prop('checked')){
+        $("#rekapTable").addClass('hide');
+        $("#detailTable").removeClass('hide');
+    }else{
+        $("#rekapTable").removeClass('hide');
+        $("#detailTable").addClass('hide');
+    }
 });

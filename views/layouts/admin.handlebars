@@ -37,15 +37,16 @@
     <div class="navbar-fixed">
         <nav>
             <div class="nav-wrapper blue">
-                <a href="#" data-activates="left-menu" class="button-collapse white-text left show-on-large ml-30"><i class="material-icons">menu</i></a>
+                <a href="#" data-target="left-menu" class="sidenav-trigger white-text left show-on-large ml-30"><i class="material-icons">menu</i></a>
                 <div class="hide-on-small-only"><span class="right mr-30 font-40">Portal Admin IT</span></div>
                 <div class="hide-on-med-and-up"><span class="right mr-30 font-15">Portal Admin IT</span></div>
             </div>
         </nav>
     </div>
-    <ul id="left-menu" class="side-nav mt-64">
+    <ul id="left-menu" class="sidenav mt-64">
         <li><a href="/admin">Lihat Antrian</a></li>
         <li><a href="/admin/workflow">Time Line Pekerjaan</a></li>
+        <li><a href="/admin/report">Laporan Kerja</a></li>
         <li><a href="/admin/logout">Logout ({{session.name}})</a></li>
     </ul>
 </header>
@@ -55,5 +56,6 @@
 </body>
 <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript" src="/javascripts/materialize.js"></script>
+<script type="text/javascript" src="/javascripts/table2CSV.js"></script>
 <script type="text/javascript" src="/javascripts/lapor.js"></script>
 </html>

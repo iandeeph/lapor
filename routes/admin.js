@@ -4,6 +4,7 @@ var _           = require('lodash');
 var mysql       = require('promise-mysql');
 var Promise     = require('bluebird');
 var moment      = require('moment');
+var humanizeDuration = require('humanize-duration');
 
 var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
 
@@ -302,6 +303,269 @@ router.get('/logout', function(req, res) {
         req.session.destroy(function(err) {
             res.redirect('/portal-auth');
         })
+    }
+});
+
+/* GET report page. */
+router.get('/report', function(req, res) {
+    if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
+        console.log("Not Logged");
+        res.redirect('/portal-auth');
+    }else {
+        var layoutTemplate = {};
+        var timelineQry= "SELECT *, laporan.nama nama, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated FROM laporan left join admin on laporan.assign = admin.nama WHERE status = 'Done' AND resolve ='TRUE' ORDER BY assign ASC";
+        laporanConn.query(timelineQry)
+            .then(function(timelineResQry) {
+                var groupedAssign = _.groupBy(timelineResQry, 'assign');
+                var arrGrpAssign = _.toArray(groupedAssign);
+                var arrResult = _.toArray(timelineResQry);
+                var templateLaporan = [];
+                //console.log(arrGrpAssign);
+                return Promise.each(arrGrpAssign, function (rowName){
+                    //console.log(rowName);
+                    layoutTemplate[rowName[0].assign] = {};
+                }).then(function(){
+                    return Promise.each(arrResult, function (rowJenis) {
+                        //console.log(rowJenis[0].jenis);
+                        layoutTemplate[rowJenis.assign][rowJenis.jenis] = [];
+                    }).then(function(){
+                        //console.log(layoutTemplate);
+                        return Promise.each(arrResult, function (rowTimeline) {
+                            //console.log(humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf()));
+                            layoutTemplate[rowTimeline.assign][rowTimeline.jenis].push({
+                                "point" : 1,
+                                "tanggalSelesai" : rowTimeline.tanggalSelesai,
+                                "totalWaktuTiket" : moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf(),
+                                "totalWaktuPengerjaan" : moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalAssign).valueOf(),
+                                "totalWaktuTiketFormated" : humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf(),{
+                                    language : 'id',
+                                    round: true,
+                                    units: ['d', 'h', 'm']
+
+                                }),
+                                "totalWaktuPengerjaanFormated" : humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalAssign).valueOf(),{
+                                    language : 'id',
+                                    round: true,
+                                    units: ['d', 'h', 'm']
+                                }),
+                                "jenis": rowTimeline.jenis,
+                                "nama":rowTimeline.nama,
+                                "divisi":rowTimeline.divisi,
+                                "tanggalBuat":rowTimeline.tanggalBuat,
+                                "tanggalAssign":rowTimeline.tanggalAssign,
+                                "assign":rowTimeline.assign,
+                                "division":rowTimeline.division,
+                                "status":rowTimeline.status,
+                                "idLaporan":rowTimeline.idlaporan,
+                                "detail":rowTimeline.detail
+                            });
+                        }).then(function(){
+                            for (var assign in layoutTemplate) {
+                                if (layoutTemplate.hasOwnProperty(assign)) {
+                                    //console.log(assign + " -> " + layoutTemplate[assign]);
+                                    for (var item in layoutTemplate[assign]) {
+                                        if (layoutTemplate[assign].hasOwnProperty(item)) {
+                                            //console.log(_.sumBy(layoutTemplate[assign][item], "totalWaktuTiket"));
+                                            templateLaporan.push({
+                                                "assign":assign,
+                                                "jenis":item,
+                                                "jumlah":_.sumBy(layoutTemplate[assign][item], "point"),
+                                                "avgTimeTicket":humanizeDuration(_.sumBy(layoutTemplate[assign][item], "totalWaktuTiket")/_.sumBy(layoutTemplate[assign][item], "point"),{
+                                                    language : 'id',
+                                                    round: true,
+                                                    units: ['d', 'h', 'm']
+                                                }),
+                                                "avgTimeDone":humanizeDuration(_.sumBy(layoutTemplate[assign][item], "totalWaktuPengerjaan")/_.sumBy(layoutTemplate[assign][item], "point"),{
+                                                    language : 'id',
+                                                    round: true,
+                                                    units: ['d', 'h', 'm']
+                                                })
+                                            })
+                                        }
+                                    }
+                                }
+                            }
+                        }).then(function(){
+                            var timelineQry= "SELECT assign FROM laporan left join admin on laporan.assign = admin.nama WHERE status = 'Done' AND resolve ='TRUE' GROUP BY assign ORDER BY assign ASC";
+                            laporanConn.query(timelineQry)
+                                .then(function(timelineResQry) {
+                                    var arrGrpAssign = _.toArray(timelineResQry);
+                                    var assignSelect = {};
+                                    return Promise.each(arrGrpAssign, function (rowAssign){
+                                        assignSelect[rowAssign.assign] = [];
+                                    }).then(function(){
+                                        return Promise.each(arrGrpAssign, function (rowAssign2){
+                                            assignSelect[rowAssign2.assign].push({
+                                                'assign' : rowAssign2.assign,
+                                                'checked' : 'checked'});
+                                        }).then(function(){
+                                            //console.log(layoutTemplate);
+                                            res.render('admin-report', {
+                                                layout: "admin",
+                                                layoutTemplate: templateLaporan,
+                                                groupedAssign: groupedAssign,
+                                                assignSelect: assignSelect,
+                                                layoutTemplateDetail: layoutTemplate
+                                            });
+                                        });
+                                    });
+                                });
+                        });
+                    });
+                });
+            }).catch(function (error) {
+                //logs out the error
+                console.error(error);
+            });
+    }
+});
+
+/* POST report page. */
+router.post('/report', function(req, res) {
+    if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
+        console.log("Not Logged");
+        res.redirect('/portal-auth');
+    }else {
+        var loginUser = req.session.name;
+        var postReport = req.body.report;
+        var postUser = req.body.report.user || {};
+        var postStartDate = moment(new Date(req.body.report.start)).format("YYYY-MM-DD 00:00:00") || {};
+        var postEndDate = moment(new Date(req.body.report.end)).format("YYYY-MM-DD 23:59:59") || {};
+        var filterDate = {
+            'start': moment(new Date(postStartDate)).format("DD MMMM, YYYY"),
+            'end': moment(new Date(postEndDate)).format("DD MMMM, YYYY")
+        };
+        var layoutTemplate = {};
+    //console.log(postUser);
+        var timelineQry= "SELECT *, " +
+            "laporan.nama nama, " +
+            "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
+            "FROM " +
+            "laporan " +
+            "left join " +
+            "admin " +
+            "on laporan.assign = admin.nama " +
+            "WHERE " +
+            "assign = '"+ postUser +"' AND " +
+            "status = 'Done' AND " +
+            "resolve ='TRUE' AND " +
+            "(tanggalAssign between '"+ postStartDate +"' AND '"+ postEndDate +"' OR " +
+            "tanggalSelesai between '"+ postStartDate +"' AND '"+ postEndDate +"') " +
+            "ORDER BY assign ASC";
+    //console.log(timelineQry);
+        laporanConn.query(timelineQry)
+            .then(function(timelineResQry) {
+                var groupedAssign = _.groupBy(timelineResQry, 'assign');
+                var groupedJenis = _.groupBy(timelineResQry, 'jenis');
+                var arrGrpAssign = _.toArray(groupedAssign);
+                var arrGrpJenis = _.toArray(groupedJenis);
+                var arrResult = _.toArray(timelineResQry);
+                var templateLaporan = [];
+                //console.log(arrGrpAssign);
+                return Promise.each(arrGrpAssign, function (rowName){
+                    //console.log(rowName);
+                    layoutTemplate[rowName[0].assign] = {};
+                }).then(function(){
+                    return Promise.each(arrResult, function (rowJenis) {
+                        //console.log(rowJenis[0].jenis);
+                        layoutTemplate[rowJenis.assign][rowJenis.jenis] = [];
+                    }).then(function(){
+                        //console.log(layoutTemplate);
+                        return Promise.each(arrResult, function (rowTimeline) {
+                            //console.log(humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf()));
+                            layoutTemplate[rowTimeline.assign][rowTimeline.jenis].push({
+                                "point" : 1,
+                                "tanggalSelesai" : rowTimeline.tanggalSelesai,
+                                "totalWaktuTiket" : moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf(),
+                                "totalWaktuPengerjaan" : moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalAssign).valueOf(),
+                                "totalWaktuTiketFormated" : humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf(),{
+                                    language : 'id',
+                                    round: true,
+                                    units: ['d', 'h', 'm']
+
+                                }),
+                                "totalWaktuPengerjaanFormated" : humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalAssign).valueOf(),{
+                                    language : 'id',
+                                    round: true,
+                                    units: ['d', 'h', 'm']
+                                }),
+                                "jenis": rowTimeline.jenis,
+                                "nama":rowTimeline.nama,
+                                "divisi":rowTimeline.divisi,
+                                "tanggalBuat":rowTimeline.tanggalBuat,
+                                "tanggalAssign":rowTimeline.tanggalAssign,
+                                "assign":rowTimeline.assign,
+                                "division":rowTimeline.division,
+                                "status":rowTimeline.status,
+                                "idLaporan":rowTimeline.idlaporan,
+                                "detail":rowTimeline.detail
+                            });
+                        }).then(function(){
+                            for (var assign in layoutTemplate) {
+                                if (layoutTemplate.hasOwnProperty(assign)) {
+                                    //console.log(assign + " -> " + layoutTemplate[assign]);
+                                    for (var item in layoutTemplate[assign]) {
+                                        if (layoutTemplate[assign].hasOwnProperty(item)) {
+                                            //console.log(_.sumBy(layoutTemplate[assign][item], "totalWaktuTiket"));
+                                            templateLaporan.push({
+                                                "assign":assign,
+                                                "jenis":item,
+                                                "jumlah":_.sumBy(layoutTemplate[assign][item], "point"),
+                                                "avgTimeTicket":humanizeDuration(_.sumBy(layoutTemplate[assign][item], "totalWaktuTiket")/_.sumBy(layoutTemplate[assign][item], "point"),{
+                                                    language : 'id',
+                                                    round: true,
+                                                    units: ['d', 'h', 'm']
+                                                }),
+                                                "avgTimeDone":humanizeDuration(_.sumBy(layoutTemplate[assign][item], "totalWaktuPengerjaan")/_.sumBy(layoutTemplate[assign][item], "point"),{
+                                                    language : 'id',
+                                                    round: true,
+                                                    units: ['d', 'h', 'm']
+                                                })
+                                            })
+                                        }
+                                    }
+                                }
+                            }
+                        }).then(function(){
+                            var timelineQry= "SELECT assign FROM laporan left join admin on laporan.assign = admin.nama WHERE status = 'Done' AND resolve ='TRUE' GROUP BY assign ORDER BY assign ASC";
+                            laporanConn.query(timelineQry)
+                                .then(function(timelineResQry) {
+                                    var arrGrpAssign = _.toArray(timelineResQry);
+                                    var assignSelect = {};
+                                    return Promise.each(arrGrpAssign, function (rowAssign){
+                                        assignSelect[rowAssign.assign] = [];
+                                        }).then(function(){
+                                        return Promise.each(arrGrpAssign, function (rowAssign2){
+                                            if(postUser == rowAssign2.assign){
+                                                assignSelect[rowAssign2.assign].push({
+                                                    'assign' : rowAssign2.assign,
+                                                    'selected' : 'selected'});
+                                            }else{
+                                                assignSelect[rowAssign2.assign].push({
+                                                    'assign' : rowAssign2.assign,
+                                                    'selected' : ''});
+                                            }
+                                        }).then(function(){
+                                            //console.log(assignSelect);
+                                            res.render('admin-report', {
+                                                layout: "admin",
+                                                layoutTemplate: templateLaporan,
+                                                groupedAssign: groupedAssign,
+                                                postReport: postReport,
+                                                filterDate: filterDate,
+                                                assignSelect: assignSelect,
+                                                layoutTemplateDetail: layoutTemplate
+                                            });
+                                        });
+                                    });
+                            });
+                        });
+                    });
+                });
+            }).catch(function (error) {
+                //logs out the error
+                console.error(error);
+            });
     }
 });
 

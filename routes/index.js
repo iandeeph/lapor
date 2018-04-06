@@ -148,7 +148,7 @@ router.get('/', function(req, res, next) {
                                                             "catatan":rowPekerja.catatan,
                                                             "warna": warnaAntrian(rowPekerja.tanggalBuat)};
                                                     }
-                                                    console.log(warnaAntrian(rowPekerja.tanggalBuat));
+                                                    //console.log(warnaAntrian(rowPekerja.tanggalBuat));
                                                 }).then(function(b){
                                                     var layoutWorkflow = {};
                                                     var timelineQry= "SELECT *, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated FROM laporan WHERE tanggalSelesai between '"+dateNowStart+"' AND '"+dateNowEnd+"' AND status = 'Done' AND resolve ='TRUE' ORDER BY tanggalSelesai DESC ";
@@ -251,19 +251,21 @@ router.post('/lapor', function(req, res, next) {
                 jenis = postLapor.jenis || {};
                 status = "On Queue";
                 noantrian = _.isNull(result[0].noantrian)? 1 : parseInt(result[0].noantrian) + 1;
+                var num = 0;
 
                 return Promise.each(postDetail, function (rowDetail) {
+                    var rowDetailAkses = _.isNull(rowDetail.akses)?rowDetail.akses.toString() : "";
                     var detailTextIT  = "Nama Anak : "+ rowDetail.nama +"\r\n" +
                         "Email Pribadi : "+ rowDetail.email +"\r\n" +
                         "Divisi Anak : "+ rowDetail.divisi +"\r\n" +
                         "Jabatan Anak : "+ rowDetail.jabatan +"\r\n" +
-                        "Kebutuhan Akses : "+ rowDetail.akses.toString() +"\r\n" +
+                        "Kebutuhan Akses : "+ rowDetailAkses +"\r\n" +
                         "Salescode : "+ rowDetail.salesCode +"\r\n" +
                         "Zoho Role : "+ rowDetail.zohoRole +"\r\n" +
                         "Portal Role : "+ rowDetail.portalRole +"\r\n" +
                         "Catatan Tambahan : "+ rowDetail.catatan +"\r\n\r\n";
                     //arrayDetail.push(JSON.stringify(rowDetail));
-                    arrayDetailIT.push(detailTextIT.toString());
+                    //arrayDetailIT.push(detailTextIT.toString());
 
                     var detailTextGA  = "Nama Anak : "+ rowDetail.nama +"\r\n" +
                         "Email Pribadi : "+ rowDetail.email +"\r\n" +
@@ -271,12 +273,14 @@ router.post('/lapor', function(req, res, next) {
                         "Jabatan Anak : "+ rowDetail.jabatan +"\r\n" +
                         "Catatan Tambahan : "+ rowDetail.catatan +"\r\n\r\n";
                     //arrayDetail.push(JSON.stringify(rowDetail));
-                    arrayDetailGA.push(detailTextGA.toString());
+                    //arrayDetailGA.push(detailTextGA.toString());
 
+                    arrayQueryValue.push([(noantrian+(num*2)), nama, divisi, "Permintaan Perlengkapan Anak Baru", detailTextIT,status, dateNow]);
+                    arrayQueryValue.push([((noantrian+(num*2))+1), nama, divisi, "Permintaan Akses Login Anak Baru", detailTextGA,status, dateNow]);
+
+                    num++;
                 }).then(function () {
                     //laporan: idlaporan, noantrian, nama, divisi, jenis, detail. status, resolve, tanggalBuat
-                    arrayQueryValue.push([noantrian, nama, divisi, "Permintaan Perlengkapan Anak Baru", arrayDetailGA.toString(),status, dateNow]);
-                    arrayQueryValue.push([(noantrian+1), nama, divisi, "Permintaan Akses Login Anak Baru", arrayDetailIT.toString(),status, dateNow]);
                     queryString = "INSERT INTO db_portal_it.laporan " +
                         "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat) " +
                         "VALUES ?";

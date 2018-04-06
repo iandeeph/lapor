@@ -1,0 +1,144 @@
+{{#section 'title'}}
+    Report - Portal IT Cermati
+{{/section}}
+{{error}}
+
+<div class="row almost-full">
+    <div class="col s12 mt-20">
+        <div class="col s12 mb-30 center">
+            <span class="font-40">Laporan Pekerjaan</span>
+        </div>
+        <div class="col s12">
+            <span class="font-20 green-text" id="message">{{message}}</span>
+        </div>
+        <div class="row">
+            <form action="" method="post">
+                <div class="col s12">
+                    <div class="col s6 left-align mt-10">
+                        <label>
+                            <input id="checkDetail" type="checkbox" class="filled-in" />
+                            <span class="font-20 mr-10">Detail Laporan </span>
+                        </label>
+                    </div>
+                    <div class="col s6 right-align">
+                        <a name="downloadCsv" id="downloadCsv" class="waves-effect waves-light btn-floating blue darken-3 right ml-10" title="Export to CSV"><i class="material-icons">file_download</i></a>
+                    </div>
+                </div>
+                <div class="col s12">
+                    <ul class="collapsible col s12" data-collapsible="expandable">
+                        <li>
+                            <div class="collapsible-header">
+                                <i class="material-icons">date_range</i>
+                                Filter periode laporan
+                            </div>
+                            <div class="collapsible-body">
+                                <div class="row">
+                                    <div class="col s12 mb-30">
+                                        <div class="input-field col s12 m5 l5">
+                                            <select name="report[user]">
+                                                <option disabled selected>Pilih User</option>
+                                                {{#each assignSelect}}
+                                                    {{#each this}}
+                                                        <option value="{{assign}}" {{selected}}>{{assign}}</option>
+                                                    {{/each}}
+                                                {{/each}}
+                                            </select>
+                                            <label>Pilih User</label>
+                                        </div>
+                                        <div class="col s12 m7 l7">
+                                            <div class="col s12 m5 l5">
+                                                <label for="startPeriode">Dari Tanggal : </label>
+                                                <input id="startPeriode" name="report[start]" type="text" class="datepicker" value="{{filterDate.start}}">
+                                            </div>
+                                            <div class="col s12 m5 l5">
+                                                <label for="endPeriode">Sampai Tanggal : </label>
+                                                <input id="endPeriode" name="report[end]" type="text" class="datepicker" value="{{filterDate.end}}">
+                                            </div>
+                                            <div class="input-field col s12 m2 l2">
+                                                <button type="submit" name="dateFilterBtn" id="dateFilterBtn" class="waves-effect waves-light btn blue darken-3 left">tampilkan</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </form>
+            <div class="col s12" id="laporanBlock">
+                <div id="rekapTable" class="home-table row">
+                    <table class="bordered">
+                        <thead>
+                        <tr class="border-bottom">
+                            <th width="1%">No</th>
+                            <th width="7%">Nama</th>
+                            <th width="15%">Jenis</th>
+                            <th width="5%">Jumlah</th>
+                            <th width="10%">Rata-rata Waktu Tiket</th>
+                            <th width="10%">Rata-rata Waktu Pengerjaan</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each layoutTemplate}}
+                            <tr>
+                                <td>{{numbyIndex @key}}</td>
+                                <td>{{assign}}</td>
+                                <td>{{jenis}}</td>
+                                <td class="center-align">{{jumlah}} Tiket</td>
+                                <td>{{avgTimeTicket}}</td>
+                                <td>{{avgTimeDone}}</td>
+                            </tr>
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+                <div id="detailTable" class="home-table row hide">
+                    <table class="bordered">
+                        <thead>
+                        <tr class="border-bottom">
+                            <th width="5%">Nama</th>
+                            <th width="15%">Jenis</th>
+                            <th width="7%">Tanggal Buat</th>
+                            <th width="7%">Tanggal Assign</th>
+                            <th width="7%">Tanggal Selesai</th>
+                            <th width="10%">Durasi Tiket</th>
+                            <th width="10%">Durasi Pengerjaan</th>
+                            <th width="1%">Detail</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        {{#each layoutTemplateDetail}}
+                            {{#each this}}
+                                {{#each this}}
+                                    <tr>
+                                        <td>{{assign}}</td>
+                                        <td>{{jenis}}</td>
+                                        <td>{{dateTime tanggalBuat}}</td>
+                                        <td>{{tanggalAssign}}</td>
+                                        <td>{{dateTime tanggalSelesai}}</td>
+                                        <td>{{totalWaktuTiketFormated}}</td>
+                                        <td>{{totalWaktuPengerjaanFormated}}</td>
+                                        <td><!-- Modal Trigger -->
+                                            <a class="modal-trigger" href="#modal{{idLaporan}}" title="Detail Tiket"><i class="material-icons" >help_outline</i></a>
+                                        </td>
+                                        <!-- Modal Structure -->
+                                        <div id="modal{{idLaporan}}" class="modal">
+                                            <div class="modal-content">
+                                                <h4>Detail Laporan</h4>
+                                                <p>{{breakLine detail}}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+                                            </div>
+                                        </div>
+                                    </tr>
+                                {{/each}}
+                            {{/each}}
+                        {{/each}}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
