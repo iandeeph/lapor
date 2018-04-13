@@ -47,17 +47,15 @@
                             <div class="col s12">
                                 <ul class="collection">
                                     {{#each this}}
-                                        {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="!="}}
-                                            <li class="collection-item avatar" title="{{detail}}">
-                                                <span class="admin-stat badge white-text blue">{{status}}</span>
-                                                <i class="circle {{warna}}">{{this.noAntrian}}</i>
-                                                <span class="title">{{nama}} - {{divisi}}</span>
-                                                <p>{{dateTime tanggalBuat}}</p>
-                                                <p>{{jenis}}</p>
-                                                <p>Status : {{catatan}}</p>
-                                                <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
-                                            </li>
-                                        {{/compare}}
+                                        <li class="collection-item avatar" title="{{detail}}">
+                                            <span class="admin-stat badge white-text blue">{{status}}</span>
+                                            <i class="circle {{warna}}">{{this.noAntrian}}</i>
+                                            <span class="title">{{nama}} - {{divisi}}</span>
+                                            <p>{{dateTime tanggalBuat}}</p>
+                                            <p>{{jenis}}</p>
+                                            <p>Status : {{catatan}}</p>
+                                            <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
+                                        </li>
                                     {{/each}}
                                 </ul>
                             </div>
