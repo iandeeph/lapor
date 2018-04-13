@@ -11,7 +11,7 @@
                     <span class="font-30">Daftar Antrian Hari Ini</span>
                 </div>
             </div>
-            <div class="row scrollable-70">
+            <div class="row">
                 <div class="col s12 center">
                     <a class="btn-floating btn waves-effect waves-light white-text light-green" title="Tambah Antrian" href="/lapor"><i class="material-icons">add</i></a>
                 </div>
@@ -37,7 +37,7 @@
                     <span class="font-30">Yang Sedang Dikerjakan</span>
                 </div>
             </div>
-            <div class="row scrollable-70">
+            <div class="row">
                 {{#each layoutPekerja}}
                     {{#each this}}
                         {{#isEmpty this}}
@@ -77,7 +77,7 @@
                     <div class="col s12 center-align">
                         <span class="font-20 bold">{{@key}}</span>
                     </div>
-                    <div class="col s12 scrollable-70">
+                    <div class="col s12">
                         <ul class="collection">
                             {{#each this}}
                                 <li class="collection-item avatar" title="{{detail}}">
@@ -97,7 +97,7 @@
     </div>
 </div>
 <!--=================================================================================================================================-->
-<div class="row almost-full">
+<div class="row almost-full hide">
     <div class="col s12 mt-20">
         <div class="col s12 border-bottom"></div>
         <div class="col s12 center">
@@ -110,7 +110,7 @@
                     <span class="font-30 valign-wrapper">Antrian Permintaan Anak Baru<i class="large material-icons blue-text">keyboard_arrow_right</i></span>
                 </div>
             </div>
-            <div class="row scrollable-70">
+            <div class="row">
                 <div class="col s12 center">
                     <a class="btn-floating btn waves-effect waves-light white-text light-green" title="Tambah Antrian" href="/lapor"><i class="material-icons">add</i></a>
                 </div>
@@ -136,7 +136,7 @@
                     <span class="font-30 valign-wrapper">Laptop Sedang Disiapkan<i class="large material-icons blue-text">keyboard_arrow_right</i></span>
                 </div>
             </div>
-            <div class="row scrollable-70">
+            <div class="row">
                 {{#each layoutPekerja}}
                     {{#compare @key 2 operator="=="}}
                         {{#each this}}
@@ -173,7 +173,7 @@
                     <span class="font-30 valign-wrapper">Akses Sedang Disiapkan<i class="large material-icons transparent-text">keyboard_arrow_right</i></span>
                 </div>
             </div>
-            <div class="row scrollable-70">
+            <div class="row">
                 {{#each layoutPekerja}}
                     {{#compare @key 1 operator="=="}}
                         {{#each this}}

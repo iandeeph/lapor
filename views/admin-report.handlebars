@@ -35,11 +35,11 @@
                                 <div class="row">
                                     <div class="col s12 mb-30">
                                         <div class="input-field col s12 m5 l5">
-                                            <select name="report[user]">
-                                                <option disabled selected>Pilih User</option>
+                                            <select name="report[user]" multiple>
+                                                <!--<option class="disabled" disabled selected>Pilih User</option>-->
                                                 {{#each assignSelect}}
                                                     {{#each this}}
-                                                        <option value="{{assign}}" {{selected}}>{{assign}}</option>
+                                                        <option class="{{disabled}}" value="{{assign}}" {{selected}} {{disabled}}>{{assign}}</option>
                                                     {{/each}}
                                                 {{/each}}
                                             </select>
@@ -48,11 +48,11 @@
                                         <div class="col s12 m7 l7">
                                             <div class="col s12 m5 l5">
                                                 <label for="startPeriode">Dari Tanggal : </label>
-                                                <input id="startPeriode" name="report[start]" type="text" class="datepicker" value="{{filterDate.start}}">
+                                                <input id="startPeriode" name="report[start]" type="text" class="datepicker" value="{{filterDate.start}}" required>
                                             </div>
                                             <div class="col s12 m5 l5">
                                                 <label for="endPeriode">Sampai Tanggal : </label>
-                                                <input id="endPeriode" name="report[end]" type="text" class="datepicker" value="{{filterDate.end}}">
+                                                <input id="endPeriode" name="report[end]" type="text" class="datepicker" value="{{filterDate.end}}" required>
                                             </div>
                                             <div class="input-field col s12 m2 l2">
                                                 <button type="submit" name="dateFilterBtn" id="dateFilterBtn" class="waves-effect waves-light btn blue darken-3 left">tampilkan</button>
@@ -97,6 +97,7 @@
                         <thead>
                         <tr class="border-bottom">
                             <th width="5%">Nama</th>
+                            <th width="5%">Tiket ID</th>
                             <th width="15%">Jenis</th>
                             <th width="7%">Tanggal Buat</th>
                             <th width="7%">Tanggal Assign</th>
@@ -112,6 +113,7 @@
                                 {{#each this}}
                                     <tr>
                                         <td>{{assign}}</td>
+                                        <td class="center-align">{{idLaporan}}</td>
                                         <td>{{jenis}}</td>
                                         <td>{{dateTime tanggalBuat}}</td>
                                         <td>{{tanggalAssign}}</td>

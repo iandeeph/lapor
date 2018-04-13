@@ -391,13 +391,20 @@ router.get('/report', function(req, res) {
                                 .then(function(timelineResQry) {
                                     var arrGrpAssign = _.toArray(timelineResQry);
                                     var assignSelect = {};
+                                    assignSelect["Pilih User"] = [];
+
+                                    assignSelect["Pilih User"].push({
+                                        'assign' : "Pilih User",
+                                        'disabled' : "disabled",
+                                        'selected' : 'selected'});
                                     return Promise.each(arrGrpAssign, function (rowAssign){
                                         assignSelect[rowAssign.assign] = [];
                                     }).then(function(){
                                         return Promise.each(arrGrpAssign, function (rowAssign2){
                                             assignSelect[rowAssign2.assign].push({
                                                 'assign' : rowAssign2.assign,
-                                                'checked' : 'checked'});
+                                                'disabled' : "",
+                                                'selected' : ''});
                                         }).then(function(){
                                             //console.log(layoutTemplate);
                                             res.render('admin-report', {
@@ -422,13 +429,14 @@ router.get('/report', function(req, res) {
 
 /* POST report page. */
 router.post('/report', function(req, res) {
-    if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
-        console.log("Not Logged");
-        res.redirect('/portal-auth');
-    }else {
+    //if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
+    //    console.log("Not Logged");
+    //    res.redirect('/portal-auth');
+    //}else {
         var loginUser = req.session.name;
         var postReport = req.body.report;
-        var postUser = req.body.report.user || {};
+        var postUser = req.body.report || {};
+        var arrPostUser = _.toArray(postUser.user) || {};
         var postStartDate = moment(new Date(req.body.report.start)).format("YYYY-MM-DD 00:00:00") || {};
         var postEndDate = moment(new Date(req.body.report.end)).format("YYYY-MM-DD 23:59:59") || {};
         var filterDate = {
@@ -436,7 +444,12 @@ router.post('/report', function(req, res) {
             'end': moment(new Date(postEndDate)).format("DD MMMM, YYYY")
         };
         var layoutTemplate = {};
-    //console.log(postUser);
+        var assignQuery = [];
+        //console.log(postUser);
+        return Promise.each(arrPostUser, function (user){
+            assignQuery.push("assign = '"+ user +"'");
+        }).then(function(){
+        var assignQueryTxt = assignQuery.toString().replace(/,/gi," OR ");
         var timelineQry= "SELECT *, " +
             "laporan.nama nama, " +
             "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
@@ -446,13 +459,13 @@ router.post('/report', function(req, res) {
             "admin " +
             "on laporan.assign = admin.nama " +
             "WHERE " +
-            "assign = '"+ postUser +"' AND " +
+            "("+assignQueryTxt+") AND " +
             "status = 'Done' AND " +
             "resolve ='TRUE' AND " +
             "(tanggalAssign between '"+ postStartDate +"' AND '"+ postEndDate +"' OR " +
             "tanggalSelesai between '"+ postStartDate +"' AND '"+ postEndDate +"') " +
             "ORDER BY assign ASC";
-    //console.log(timelineQry);
+        //console.log(timelineQry);
         laporanConn.query(timelineQry)
             .then(function(timelineResQry) {
                 var groupedAssign = _.groupBy(timelineResQry, 'assign');
@@ -532,17 +545,27 @@ router.post('/report', function(req, res) {
                                 .then(function(timelineResQry) {
                                     var arrGrpAssign = _.toArray(timelineResQry);
                                     var assignSelect = {};
+                                    assignSelect["Pilih User"] = [];
+
+                                    assignSelect["Pilih User"].push({
+                                        'assign' : "Pilih User",
+                                        'disabled' : "disabled",
+                                        'selected' : ''});
                                     return Promise.each(arrGrpAssign, function (rowAssign){
                                         assignSelect[rowAssign.assign] = [];
                                         }).then(function(){
                                         return Promise.each(arrGrpAssign, function (rowAssign2){
-                                            if(postUser == rowAssign2.assign){
+                                            var filterUser = _.indexOf(postUser.user, rowAssign2.assign);
+                                            //console.log(_.indexOf(postUser.user, rowAssign2.assign));
+                                            if(filterUser >=0){
                                                 assignSelect[rowAssign2.assign].push({
                                                     'assign' : rowAssign2.assign,
+                                                    'disabled' : "",
                                                     'selected' : 'selected'});
                                             }else{
                                                 assignSelect[rowAssign2.assign].push({
                                                     'assign' : rowAssign2.assign,
+                                                    'disabled' : "",
                                                     'selected' : ''});
                                             }
                                         }).then(function(){
@@ -566,7 +589,8 @@ router.post('/report', function(req, res) {
                 //logs out the error
                 console.error(error);
             });
-    }
+        });
+    //}
 });
 
 module.exports = router;
