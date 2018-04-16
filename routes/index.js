@@ -80,6 +80,7 @@ router.get('/', function(req, res, next) {
                 Object.keys(result).forEach(function(key) {
                     layoutAntrian[key] = {
                         "noAntrian" : result[key].noantrian,
+                        "idLaporan" : result[key].idlaporan,
                         "jenis": result[key].jenis,
                         "nama":result[key].nama,
                         "divisi":result[key].divisi,
@@ -125,6 +126,7 @@ router.get('/', function(req, res, next) {
                                                     if(!_.isUndefined(layoutPekerja['1'][rowPekerja.assign])) {
                                                         layoutPekerja['1'][rowPekerja.assign][rowPekerja.noantrian] = {
                                                             "noAntrian": rowPekerja.noantrian,
+                                                            "idLaporan": rowPekerja.idlaporan,
                                                             "jenis": rowPekerja.jenis,
                                                             "nama": rowPekerja.nama,
                                                             "divisi": rowPekerja.divisi,
@@ -138,6 +140,7 @@ router.get('/', function(req, res, next) {
                                                     }else{
                                                         layoutPekerja['2'][rowPekerja.assign][rowPekerja.noantrian] = {
                                                             "noAntrian" : rowPekerja.noantrian,
+                                                            "idLaporan" : rowPekerja.idlaporan,
                                                             "jenis": rowPekerja.jenis,
                                                             "nama":rowPekerja.nama,
                                                             "divisi":rowPekerja.divisi,

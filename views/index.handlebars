@@ -21,10 +21,24 @@
                             {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="!="}}
                                 <li class="collection-item avatar" title="{{detail}}">
                                     <i class="circle {{warna}}">{{noAntrian}}</i>
-                                    <span class="title">{{jenis}}</span>
+                                    <span class="title">
+                                        {{jenis}}
+                                        <!-- Modal Trigger -->
+                                        <a class="modal-trigger" href="#modal{{idLaporan}}" title="Detail Tiket"><i class="material-icons" >help_outline</i></a>
+                                    </span>
                                     <p>{{dateTime tanggalBuat}}</p>
                                     <p>{{nama}} - {{divisi}}</p>
                                 </li>
+                                <!-- Modal Structure -->
+                                <div id="modal{{idLaporan}}" class="modal">
+                                    <div class="modal-content">
+                                        <h4>Detail Laporan</h4>
+                                        <p>{{breakLine detail}}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+                                    </div>
+                                </div>
                             {{/compare}}
                         {{/each}}
                     </ul>
@@ -50,12 +64,26 @@
                                         <li class="collection-item avatar" title="{{detail}}">
                                             <span class="admin-stat badge white-text blue">{{status}}</span>
                                             <i class="circle {{warna}}">{{this.noAntrian}}</i>
-                                            <span class="title">{{nama}} - {{divisi}}</span>
+                                            <span class="title">
+                                                {{nama}} - {{divisi}}
+                                                <!-- Modal Trigger -->
+                                                <a class="modal-trigger" href="#modal{{idLaporan}}" title="Detail Tiket"><i class="material-icons" >help_outline</i></a>
+                                            </span>
                                             <p>{{dateTime tanggalBuat}}</p>
                                             <p>{{jenis}}</p>
                                             <p>Status : {{catatan}}</p>
                                             <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
                                         </li>
+                                        <!-- Modal Structure -->
+                                        <div id="modal{{idLaporan}}" class="modal">
+                                            <div class="modal-content">
+                                                <h4>Detail Laporan</h4>
+                                                <p>{{breakLine detail}}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+                                            </div>
+                                        </div>
                                     {{/each}}
                                 </ul>
                             </div>
@@ -81,11 +109,25 @@
                                 <li class="collection-item avatar" title="{{detail}}">
                                     <span class="admin-stat badge white-text blue">{{status}}</span>
                                     <i class="circle {{warna}} material-icons">done</i>
-                                    <span class="title">{{jenis}}</span>
+                                    <span class="title">
+                                        {{jenis}}
+                                        <!-- Modal Trigger -->
+                                        <a class="modal-trigger" href="#modal{{idLaporan}}" title="Detail Tiket"><i class="material-icons" >help_outline</i></a>
+                                    </span>
                                     <p>{{dateTime tanggalSelesai}}</p>
                                     <p>{{nama}} - {{divisi}}</p>
                                     <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
                                 </li>
+                                <!-- Modal Structure -->
+                                <div id="modal{{idLaporan}}" class="modal">
+                                    <div class="modal-content">
+                                        <h4>Detail Laporan</h4>
+                                        <p>{{breakLine detail}}</p>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+                                    </div>
+                                </div>
                             {{/each}}
                         </ul>
                     </div>
