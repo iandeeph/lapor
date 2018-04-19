@@ -208,7 +208,7 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '<div id="templateContent">' +
         '<div class="file-field input-field col s12 m6 l4">' +
         '<input id="laporname" name="lapor[nama]" type="text" class="validate" required>' +
-        '<label for="laporname0">Nama Anda</label>' +
+        '<label for="laporname">Nama Anda</label>' +
         '</div>' +
         '<div class="file-field input-field col s12 m6 l4">' +
         '<input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" required>' +
@@ -244,7 +244,7 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '<div id="templateContent">' +
         '<div class="file-field input-field col s12 m6 l6">' +
         '<input id="laporname" name="lapor[nama]" type="text" class="validate" required>' +
-        '<label for="laporname0">Nama SPV</label>' +
+        '<label for="laporname">Nama SPV</label>' +
         '</div>' +
         '<div class="file-field input-field col s12 m6 l6">' +
         '<input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" required>' +
