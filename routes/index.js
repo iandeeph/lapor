@@ -278,8 +278,8 @@ router.post('/lapor', function(req, res, next) {
                     //arrayDetail.push(JSON.stringify(rowDetail));
                     //arrayDetailGA.push(detailTextGA.toString());
 
-                    arrayQueryValue.push([(noantrian+(num*2)), nama, divisi, "Permintaan Perlengkapan Anak Baru", detailTextIT,status, dateNow]);
-                    arrayQueryValue.push([((noantrian+(num*2))+1), nama, divisi, "Permintaan Akses Login Anak Baru", detailTextGA,status, dateNow]);
+                    arrayQueryValue.push([(noantrian+(num*2)), nama, divisi, "Permintaan Perlengkapan Anak Baru", detailTextGA,status, dateNow]);
+                    arrayQueryValue.push([((noantrian+(num*2))+1), nama, divisi, "Permintaan Akses Login Anak Baru", detailTextIT,status, dateNow]);
 
                     num++;
                 }).then(function () {
