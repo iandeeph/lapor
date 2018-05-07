@@ -58,6 +58,7 @@ router.get('/', function(req, res, next) {
         var privUser = req.session.priv;
         var classification;
         var color = "";
+        var jenisWarna = "";
 
         function warnaAntrian(tanggal){
             if(moment(tanggal) <= afterTomorrow){
@@ -69,6 +70,16 @@ router.get('/', function(req, res, next) {
             }
 
             return color;
+        }
+
+        function warnaJenis(jenis) {
+            if(jenis == "Permintaan Perlengkapan Anak Baru" || jenis == "Informasi Anak Resign"){
+                jenisWarna = ""
+            }else{
+                jenisWarna = "grey lighten-2"
+            }
+
+            return jenisWarna;
         }
         laporanConn.query("SELECT * FROM laporan ORDER BY noantrian")
             .then(function (result) {
@@ -98,12 +109,14 @@ router.get('/', function(req, res, next) {
                             "detail" : antrianItem[key].detail,
                             "idLaporan" : antrianItem[key].idlaporan,
                             "warna" : warnaAntrian(antrianItem[key].tanggalBuat),
+                            "warnaJenis" : warnaJenis(antrianItem[key].jenis),
                             "classification" : classification
                         };
                     });
 
                     return Promise.all(layoutAntrian)
                         .then(function (a) {
+                            //console.log(layoutAntrian);
                             var promisePekerja = new Promise(function (resolve, reject) {
                                 resolve(_.filter(result, function(row) {
                                     //return (row.status != "On Queue" && !row.resolve && row.assign != 'open')

@@ -43,6 +43,10 @@ function replaceAll(str, find, replace) {
     return str.replace(new RegExp(find, 'g'), replace);
 }
 
+function capitalizeFirstLetter(str) {
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});;
+}
+
 /* GET home page. */
 router.get('/', function(req, res, next) {
     var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
@@ -206,8 +210,6 @@ router.get('/lapor', function(req, res, next) {
 router.post('/lapor', function(req, res, next) {
     var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
     var arrayQueryValue = [];
-    var arrayDetailIT = [];
-    var arrayDetailGA = [];
     var nama = "";
     var divisi = "";
     var jenis = "";
@@ -249,7 +251,7 @@ router.post('/lapor', function(req, res, next) {
                 //}
 
                 var postDetail = req.body.detail || {};
-                nama = postLapor.nama || {};
+                nama = capitalizeFirstLetter(postLapor.nama) || {};
                 divisi = postLapor.divisi || {};
                 jenis = postLapor.jenis || {};
                 status = "On Queue";
@@ -258,8 +260,8 @@ router.post('/lapor', function(req, res, next) {
 
                 return Promise.each(postDetail, function (rowDetail) {
                     var rowDetailAkses = _.isNull(rowDetail.akses)?rowDetail.akses.toString() : "";
-                    var detailTextIT  = "Nama Anak : "+ rowDetail.nama +"\r\n" +
-                        "Email Pribadi : "+ rowDetail.email +"\r\n" +
+                    var detailTextIT  = "Nama Anak : "+ capitalizeFirstLetter(rowDetail.nama) +"\r\n" +
+                        "Email Pribadi : "+ rowDetail.email.toLowerCase() +"\r\n" +
                         "Divisi Anak : "+ rowDetail.divisi +"\r\n" +
                         "Jabatan Anak : "+ rowDetail.jabatan +"\r\n" +
                         "Kebutuhan Akses : "+ rowDetailAkses +"\r\n" +
@@ -270,8 +272,8 @@ router.post('/lapor', function(req, res, next) {
                     //arrayDetail.push(JSON.stringify(rowDetail));
                     //arrayDetailIT.push(detailTextIT.toString());
 
-                    var detailTextGA  = "Nama Anak : "+ rowDetail.nama +"\r\n" +
-                        "Email Pribadi : "+ rowDetail.email +"\r\n" +
+                    var detailTextGA  = "Nama Anak : "+ capitalizeFirstLetter(rowDetail.nama) +"\r\n" +
+                        "Email Pribadi : "+ rowDetail.email.toLowerCase() +"\r\n" +
                         "Divisi Anak : "+ rowDetail.divisi +"\r\n" +
                         "Jabatan Anak : "+ rowDetail.jabatan +"\r\n" +
                         "Catatan Tambahan : "+ rowDetail.catatan +"\r\n\r\n";
@@ -304,7 +306,7 @@ router.post('/lapor', function(req, res, next) {
                 });
 
             }else if (req.body.laporsubmit == "resign"){
-                nama = postLapor.nama;
+                nama = capitalizeFirstLetter(postLapor.nama);
                 divisi = postLapor.divisi;
                 jenis = postLapor.jenis;
                 detail = postLapor.detail;
@@ -331,7 +333,7 @@ router.post('/lapor', function(req, res, next) {
                         console.error(error);
                     });
             }else if (req.body.laporsubmit == "other"){
-                nama = postLapor.nama;
+                nama = capitalizeFirstLetter(postLapor.nama);
                 divisi = postLapor.divisi;
                 jenis = postLapor.jenis;
                 var lokasi = postLapor.lokasi;
