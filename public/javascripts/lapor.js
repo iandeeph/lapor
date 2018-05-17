@@ -240,6 +240,42 @@ $(document).on('change', 'select[id=laporjenis]', function() {
         '</div>' +
         '';
 
+    var lastOther = '' +
+        '<div id="templateContent">' +
+        '<div class="file-field input-field col s12 m6 l4">' +
+        '<input id="laporname" name="lapor[nama]" type="text" class="validate" required>' +
+        '<label for="laporname">Nama Anda</label>' +
+        '</div>' +
+        '<div class="file-field input-field col s12 m6 l4">' +
+        '<input id="lapordivisi" name="lapor[divisi]" type="text" class="validate" required>' +
+        '<label for="lapordivisi">Divisi</label>' +
+        '</div>' +
+        '<div class="input-field col s12 m6 l3">' +
+        '<select id="lokasi" name="lapor[lokasi]" required>' +
+        '<option value="" disabled selected>Pilih Lokasi</option>' +
+        '<option value="Daan Mogot">Daan Mogot</option>' +
+        '<option value="Bandung">Bandung</option>' +
+        '<option value="Surabaya">Surabaya</option>' +
+        '<option value="Kedoya 1">Kedoya 1</option>' +
+        '<option value="Kedoya 2">Kedoya 2</option>' +
+        '<option value="Kedoya 3">Kedoya 3</option>' +
+        '</select>' +
+        '<label>Lokasi</label>' +
+        '</div>' +
+        '<div class="file-field input-field col s12 m6 l1">' +
+        '<input id="laporLantai" name="lapor[lantai]" type="text" class="validate" required>' +
+        '<label for="laporLantai">Lantai</label>' +
+        '</div>' +
+        '<div class="input-field col s12">' +
+        '<textarea id="lapordetail" name="lapor[detail]" class="materialize-textarea" required></textarea>' +
+        '<label for="lapordetail">Detail Permintaan</label>' +
+        '</div>' +
+        '<div class="input-field col s12 mb-20">' +
+        '<button type="submit" value="lastOther" name="laporsubmit" id="0" class="waves-effect waves-light btn blue darken-3 right ml-10">Kirim</button>' +
+        '</div>' +
+        '</div>' +
+        '';
+
     var resign = '' +
         '<div id="templateContent">' +
         '<div class="file-field input-field col s12 m6 l6">' +
@@ -264,13 +300,17 @@ $(document).on('change', 'select[id=laporjenis]', function() {
     }
 
     switch ($(this).val()){
-        case 'Permintaan Perlengkapan & Akses Login Anak Baru' :
+        case '1' :
             $(divBlock).append(newMember);
             newUserBundle();
             $(laporBody).addClass('almost-full');
             break;
-        case 'Informasi Anak Resign' :
+        case '4' :
             $(divBlock).append(resign);
+            $(laporBody).addClass('container');
+            break;
+        case '11' :
+            $(divBlock).append(lastOther);
             $(laporBody).addClass('container');
             break;
         default :

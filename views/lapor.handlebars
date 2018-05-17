@@ -12,15 +12,9 @@
             <div class="input-field col s12">
                 <select id="laporjenis" name="lapor[jenis]" required>
                     <option value="" disabled selected>Pilih Jenis Laporan</option>
-                    <option value="Permintaan Perlengkapan & Akses Login Anak Baru">Permintaan Perlengkapan & Akses Login Anak Baru</option>
-                    <option value="Informasi Anak Resign">Informasi Anak Resign</option>
-                    <option value="Permintaan Pergantian Perangkat (mouse rusak, laptop error, dll)">Permintaan Pergantian Perangkat (mouse rusak, laptop error, dll)</option>
-                    <option value="Setting printer">Setting printer</option>
-                    <option value="Tambah Akses Baru">Tambah Akses Baru</option>
-                    <option value="Tambah Aplikasi">Tambah Aplikasi</option>
-                    <option value="Troubleshoot/Perangkat Error (Laptop, Mouse, Headset)">Troubleshoot/Perangkat Error (Laptop, Mouse, Headset)</option>
-                    <option value="Masalah Telepon">Masalah Telepon</option>
-                    <option value="Lainnya..">Lainnya..</option>
+                    {{#each jenis}}
+                        <option value="{{this.idjenis}}">{{this.nama}}</option>
+                    {{/each}}
                 </select>
                 <label>Jenis Laporan</label>
             </div>

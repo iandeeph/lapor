@@ -24,6 +24,17 @@ exports.dateTime = function (date) {
     return parse;
 };
 
+exports.materializeDate = function (date) {
+    var parse = "";
+    if(_.isDate(date)){
+        parse = moment(date).format("DD MMMM, YYYY");
+    }else{
+        parse = "-";
+    }
+
+    return parse;
+};
+
 exports.numbyIndex = function (index) {
     var parse = "";
     parse = parseInt(index) + 1;

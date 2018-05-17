@@ -698,6 +698,10 @@ div.valueLabel {
     height: 70px;
 }
 
+.height-70-percent{
+    height: 70vh;
+}
+
 /*FREEZE LEFT PANES*/
 table .freeze {
     border-collapse: separate;

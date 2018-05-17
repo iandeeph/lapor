@@ -18,28 +18,27 @@
                 <div class="col s12">
                     <ul class="collection">
                         {{#each layoutTemplate}}
-                            {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="!="}}
-                                <li class="collection-item avatar" title="{{detail}}">
-                                    <i class="circle {{warna}}">{{noAntrian}}</i>
-                                    <span class="title">
-                                        {{jenis}}
-                                        <!-- Modal Trigger -->
-                                        <a class="modal-trigger" href="#modal{{idLaporan}}" title="Detail Tiket"><i class="material-icons" >help_outline</i></a>
-                                    </span>
-                                    <p>{{dateTime tanggalBuat}}</p>
-                                    <p>{{nama}} - {{divisi}}</p>
-                                </li>
-                                <!-- Modal Structure -->
-                                <div id="modal{{idLaporan}}" class="modal">
-                                    <div class="modal-content">
-                                        <h4>Detail Laporan</h4>
-                                        <p>{{breakLine detail}}</p>
-                                    </div>
-                                    <div class="modal-footer">
-                                        <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
-                                    </div>
+                            <li class="collection-item avatar" title="{{detail}}">
+                                <i class="circle {{warna}}">{{noAntrian}}</i>
+                                <span class="title">
+                                    {{jenis}}
+                                    <!-- Modal Trigger -->
+                                    <a class="modal-trigger" href="#modal{{idLaporan}}" title="Detail Tiket"><i class="material-icons" >help_outline</i></a>
+                                </span>
+                                <p>Tanggal Buat : {{dateTime tanggalBuat}}</p>
+                                <p>Due Date : {{dateTime tanggalBatas}}</p>
+                                <p>{{nama}} - {{divisi}}</p>
+                            </li>
+                            <!-- Modal Structure -->
+                            <div id="modal{{idLaporan}}" class="modal">
+                                <div class="modal-content">
+                                    <h4>Detail Laporan</h4>
+                                    <p>{{breakLine detail}}</p>
                                 </div>
-                            {{/compare}}
+                                <div class="modal-footer">
+                                    <a href="#!" class="modal-action modal-close waves-effect waves-green btn-flat">Ok</a>
+                                </div>
+                            </div>
                         {{/each}}
                     </ul>
                 </div>
@@ -69,7 +68,8 @@
                                                 <!-- Modal Trigger -->
                                                 <a class="modal-trigger" href="#modal{{idLaporan}}" title="Detail Tiket"><i class="material-icons" >help_outline</i></a>
                                             </span>
-                                            <p>{{dateTime tanggalBuat}}</p>
+                                            <p>Tanggal Buat{{dateTime tanggalBuat}}</p>
+                                            <p>Due Date : {{dateTime tanggalBatas}}</p>
                                             <p>{{jenis}}</p>
                                             <p>Status : {{catatan}}</p>
                                             <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
@@ -131,116 +131,6 @@
                             {{/each}}
                         </ul>
                     </div>
-                {{/each}}
-            </div>
-        </div>
-    </div>
-</div>
-<!--=================================================================================================================================-->
-<div class="row almost-full hide">
-    <div class="col s12 mt-20">
-        <div class="col s12 border-bottom"></div>
-        <div class="col s12 center">
-            <span class="font-30">Untuk Permintaan Anak Baru</span>
-        </div>
-        <div class="col s12 border-bottom mb-20"></div>
-        <div class="col s12 m6 l4">
-            <div class="row">
-                <div class="col s12">
-                    <span class="font-30 valign-wrapper">Antrian Permintaan Anak Baru<i class="large material-icons blue-text">keyboard_arrow_right</i></span>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col s12 center">
-                    <a class="btn-floating btn waves-effect waves-light white-text light-green" title="Tambah Antrian" href="/lapor"><i class="material-icons">add</i></a>
-                </div>
-                <div class="col s12">
-                    <ul class="collection">
-                        {{#each layoutTemplate}}
-                            {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="=="}}
-                                <li class="collection-item avatar" title="{{detail}}">
-                                    <i class="circle {{warna}}">{{noAntrian}}</i>
-                                    <span class="title">{{jenis}}</span>
-                                    <p>{{dateTime tanggalBuat}}</p>
-                                    <p>{{nama}} - {{divisi}}</p>
-                                </li>
-                            {{/compare}}
-                        {{/each}}
-                    </ul>
-                </div>
-            </div>
-        </div>
-        <div class="col s12 m6 l4">
-            <div class="row">
-                <div class="col s12 center">
-                    <span class="font-30 valign-wrapper">Laptop Sedang Disiapkan<i class="large material-icons blue-text">keyboard_arrow_right</i></span>
-                </div>
-            </div>
-            <div class="row">
-                {{#each layoutPekerja}}
-                    {{#compare @key 2 operator="=="}}
-                        {{#each this}}
-                            {{#isEmpty this}}
-                                <div class="col s12">
-                                    <span class="font-20 bold">{{@key}}</span>
-                                </div>
-                                <div class="col s12">
-                                    <ul class="collection">
-                                        {{#each this}}
-                                            {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="=="}}
-                                                    <li class="collection-item avatar" title="{{detail}}">
-                                                        <span class="admin-stat badge white-text blue">{{status}}</span>
-                                                        <i class="circle {{warna}}">{{this.noAntrian}}</i>
-                                                        <span class="title">{{nama}} - {{divisi}}</span>
-                                                        <p>{{dateTime tanggalBuat}}</p>
-                                                        <p>{{jenis}}</p>
-                                                        <p>Status : {{catatan}}</p>
-                                                        <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
-                                                    </li>
-                                            {{/compare}}
-                                        {{/each}}
-                                    </ul>
-                                </div>
-                            {{/isEmpty}}
-                        {{/each}}
-                    {{/compare}}
-                {{/each}}
-            </div>
-        </div>
-        <div class="col s12 m12 l4">
-            <div class="row">
-                <div class="col s12 center">
-                    <span class="font-30 valign-wrapper">Akses Sedang Disiapkan<i class="large material-icons transparent-text">keyboard_arrow_right</i></span>
-                </div>
-            </div>
-            <div class="row">
-                {{#each layoutPekerja}}
-                    {{#compare @key 1 operator="=="}}
-                        {{#each this}}
-                            {{#isEmpty this}}
-                                <div class="col s12">
-                                    <span class="font-20 bold">{{@key}}</span>
-                                </div>
-                                <div class="col s12">
-                                    <ul class="collection">
-                                        {{#each this}}
-                                            {{#compare jenis "Permintaan Perlengkapan & Akses Login Anak Baru" operator="=="}}
-                                                <li class="collection-item avatar" title="{{detail}}">
-                                                    <span class="admin-stat badge white-text blue">{{status}}</span>
-                                                    <i class="circle {{warna}}">{{this.noAntrian}}</i>
-                                                    <span class="title">{{nama}} - {{divisi}}</span>
-                                                    <p>{{dateTime tanggalBuat}}</p>
-                                                    <p>{{jenis}}</p>
-                                                    <p>Status : {{catatan}}</p>
-                                                    <!--<span class="top-5 right-5 secondary-content white-text light-blue pdl-10 pdr-10 pdt-10 pdb-10 bold">{{status}}</span>-->
-                                                </li>
-                                            {{/compare}}
-                                        {{/each}}
-                                    </ul>
-                                </div>
-                            {{/isEmpty}}
-                        {{/each}}
-                    {{/compare}}
                 {{/each}}
             </div>
         </div>

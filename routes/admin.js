@@ -42,6 +42,32 @@ function handleDisconnect() {
 
 handleDisconnect();
 
+function warnaAntrian(tanggal, dueDate){
+    var hMin1 = "";
+    var hMin2 = "";
+    var color = "";
+    if (dueDate != "0000-00-00 00:00:00"){
+        hMin1 = moment(dueDate).subtract(1,'d');
+        hMin2 = moment(dueDate).subtract(2,'d');
+    }else{
+        hMin1 = moment(tanggal).add(1,'d');
+        hMin2 = moment(tanggal).add(2,'d');
+    }
+    //console.log("tanggal = "+moment(tanggal));
+    //console.log("hMin1 = "+hMin1);
+    //console.log("hMin2 = "+hMin2);
+    if(moment() < hMin1){
+        color = "green darken-3";
+    }else if(moment() >= hMin1 && moment() < hMin2){
+        color = "orange"
+    }else if(moment() >= hMin2){
+        color = "red"
+    }else{
+        color = "grey"
+    }
+
+    return color;
+}
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -52,25 +78,12 @@ router.get('/', function(req, res, next) {
     }else {
         var layoutAntrian = [];
         var layoutPekerja = {};
-        var tomorrow = moment().subtract(1,'d');
-        var afterTomorrow = moment().subtract(2,'d');
         var loginUser = req.session.name;
+        var loginRole = req.session.role;
         var privUser = req.session.priv;
         var classification;
         var color = "";
         var jenisWarna = "";
-
-        function warnaAntrian(tanggal){
-            if(moment(tanggal) <= afterTomorrow){
-                color = "red"
-            }else if(moment(tanggal) < tomorrow){
-                color = "orange"
-            }else{
-                color = "green darken-3"
-            }
-
-            return color;
-        }
 
         function warnaJenis(jenis) {
             if(jenis == "Permintaan Perlengkapan Anak Baru" || jenis == "Informasi Anak Resign"){
@@ -81,7 +94,8 @@ router.get('/', function(req, res, next) {
 
             return jenisWarna;
         }
-        laporanConn.query("SELECT * FROM laporan ORDER BY noantrian")
+        laporanConn.query("SELECT *, laporan.nama nama, jenis.nama namaJenis, laporan.status status, jenis.status statusJenis, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
+            "FROM laporan left join admin on laporan.assign = admin.nama left join jenis on laporan.jenis = jenis.idjenis order by laporan.noantrian")
             .then(function (result) {
                 //console.log(result);
                 var resultPromise = new Promise(function (resolve, reject) {
@@ -100,16 +114,19 @@ router.get('/', function(req, res, next) {
                         }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "1"){
                             classification = "1";
                         }
+
                         layoutAntrian[key] = {
                             "noAntrian": antrianItem[key].noantrian,
-                            "jenis": antrianItem[key].jenis,
+                            "jenis": (!_.isEmpty(antrianItem[key].namaJenis))?antrianItem[key].namaJenis:antrianItem[key].jenis,
                             "nama": antrianItem[key].nama,
                             "divisi": antrianItem[key].divisi,
                             "tanggalBuat": antrianItem[key].tanggalBuat,
+                            "tanggalBatas": antrianItem[key].tanggalBatas,
                             "detail" : antrianItem[key].detail,
                             "idLaporan" : antrianItem[key].idlaporan,
-                            "warna" : warnaAntrian(antrianItem[key].tanggalBuat),
+                            "warna" : warnaAntrian(antrianItem[key].tanggalBuat, antrianItem[key].tanggalBatas),
                             "warnaJenis" : warnaJenis(antrianItem[key].jenis),
+                            "loginRole":loginRole,
                             "classification" : classification
                         };
                     });
@@ -140,16 +157,19 @@ router.get('/', function(req, res, next) {
                                                 return Promise.each(arrPekerja, function (rowPekerja){
                                                     layoutPekerja[rowPekerja.assign][rowPekerja.noantrian] = {
                                                         "noAntrian" : rowPekerja.noantrian,
-                                                        "jenis": rowPekerja.jenis,
+                                                        "jenis": (!_.isEmpty(rowPekerja.namaJenis))?rowPekerja.namaJenis:rowPekerja.jenis,
                                                         "nama":rowPekerja.nama,
                                                         "divisi":rowPekerja.divisi,
                                                         "tanggalBuat":rowPekerja.tanggalBuat,
-                                                        "warna":warnaAntrian(rowPekerja.tanggalBuat),
+                                                        "tanggalBatas":rowPekerja.tanggalBatas,
+                                                        "warna":warnaAntrian(rowPekerja.tanggalBuat, rowPekerja.tanggalBatas),
                                                         "assign":rowPekerja.assign,
+                                                        "role":rowPekerja.role,
                                                         "catatan":rowPekerja.catatan,
                                                         "status":rowPekerja.status,
                                                         "idLaporan":rowPekerja.idlaporan,
                                                         "detail":rowPekerja.detail,
+                                                        "loginRole":loginRole,
                                                         "loginUser":loginUser
                                                     };
                                                 }).then(function(b){
@@ -208,6 +228,7 @@ router.post('/', function(req, res, next) {
         var laporsubmit = req.body.laporsubmit || {};
         var jenis = req.body.jenis || {};
         var laporUpdate = req.body.laporStatus || {};
+        var laporDueDate = moment(new Date(req.body.laporDueDate)).format("YYYY-MM-DD 12:00:00") || {};
         if(laporsubmit == "kerjakan"){
             updateQry = "UPDATE db_portal_it.laporan SET " +
                 "status = 'On Doing', " +
@@ -240,6 +261,10 @@ router.post('/', function(req, res, next) {
             updateQry = "UPDATE db_portal_it.laporan SET " +
                 "catatan = '"+laporUpdate+"' " +
                 "WHERE idlaporan = '"+idLaporan+"' ";
+        }else if(laporsubmit == "editDueDate"){
+            updateQry = "UPDATE db_portal_it.laporan SET " +
+                "tanggalBatas = '"+laporDueDate+"' " +
+                "WHERE idlaporan = '"+idLaporan+"' ";
         }else if(laporsubmit == "takeOver"){
             updateQry = "UPDATE db_portal_it.laporan SET " +
                 "status = 'On Doing', " +
@@ -270,7 +295,8 @@ router.get('/workflow', function(req, res, next) {
         res.redirect('/portal-auth');
     }else {
         var layoutTemplate = {};
-        var timelineQry= "SELECT *, laporan.nama nama, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated FROM laporan left join admin on laporan.assign = admin.nama WHERE status = 'Done' AND resolve ='TRUE' ORDER BY tanggalSelesai DESC";
+        var timelineQry= "SELECT *, laporan.nama nama, jenis.nama namaJenis, laporan.status status, jenis.status statusJenis, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
+            "FROM laporan left join admin on laporan.assign = admin.nama left join jenis on laporan.jenis = jenis.idjenis WHERE laporan.status = 'Done' AND resolve ='TRUE' ORDER BY tanggalSelesai DESC";
         laporanConn.query(timelineQry)
             .then(function(timelineResQry) {
                 var groupedDate = _.groupBy(timelineResQry, 'doneDateFormated');
@@ -282,7 +308,7 @@ router.get('/workflow', function(req, res, next) {
                     return Promise.each(arrResult, function (rowTimeline) {
                         layoutTemplate[rowTimeline.doneDateFormated].push({
                             "tanggalSelesai" : rowTimeline.tanggalSelesai,
-                            "jenis": rowTimeline.jenis,
+                            "jenis": (!_.isEmpty(rowTimeline.namaJenis))?rowTimeline.namaJenis:rowTimeline.jenis,
                             "nama":rowTimeline.nama,
                             "divisi":rowTimeline.divisi,
                             "tanggalBuat":rowTimeline.tanggalBuat,
@@ -326,7 +352,8 @@ router.get('/report', function(req, res) {
         res.redirect('/portal-auth');
     }else {
         var layoutTemplate = {};
-        var timelineQry= "SELECT *, laporan.nama nama, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated FROM laporan left join admin on laporan.assign = admin.nama WHERE status = 'Done' AND resolve ='TRUE' ORDER BY assign ASC";
+        var timelineQry= "SELECT *, laporan.nama nama, jenis.nama namaJenis, laporan.status status, jenis.status statusJenis, DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
+            "FROM laporan left join admin on laporan.assign = admin.nama left join jenis on laporan.jenis = jenis.idjenis WHERE laporan.status = 'Done' AND resolve ='TRUE' ORDER BY assign ASC";
         laporanConn.query(timelineQry)
             .then(function(timelineResQry) {
                 var groupedAssign = _.groupBy(timelineResQry, 'assign');
@@ -361,7 +388,7 @@ router.get('/report', function(req, res) {
                                     round: true,
                                     units: ['d', 'h', 'm']
                                 }),
-                                "jenis": rowTimeline.jenis,
+                                "jenis": (!_.isEmpty(rowTimeline.namaJenis))?rowTimeline.namaJenis:rowTimeline.jenis,
                                 "nama":rowTimeline.nama,
                                 "divisi":rowTimeline.divisi,
                                 "tanggalBuat":rowTimeline.tanggalBuat,
@@ -465,15 +492,22 @@ router.post('/report', function(req, res) {
         var assignQueryTxt = assignQuery.toString().replace(/,/gi," OR ");
         var timelineQry= "SELECT *, " +
             "laporan.nama nama, " +
+            "admin.nama namaAdmin, " +
+            "laporan.status status, " +
+            "jenis.nama namaJenis, " +
+            "jenis.status statusJenis, " +
             "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
             "FROM " +
             "laporan " +
             "left join " +
             "admin " +
             "on laporan.assign = admin.nama " +
+            "left join " +
+            "jenis " +
+            "on laporan.jenis = jenis.idjenis " +
             "WHERE " +
             "("+assignQueryTxt+") AND " +
-            "status = 'Done' AND " +
+            "laporan.status = 'Done' AND " +
             "resolve ='TRUE' AND " +
             "(tanggalAssign between '"+ postStartDate +"' AND '"+ postEndDate +"' OR " +
             "tanggalSelesai between '"+ postStartDate +"' AND '"+ postEndDate +"') " +
@@ -515,7 +549,7 @@ router.post('/report', function(req, res) {
                                     round: true,
                                     units: ['d', 'h', 'm']
                                 }),
-                                "jenis": rowTimeline.jenis,
+                                "jenis": (!_.isEmpty(rowTimeline.namaJenis))?rowTimeline.namaJenis:rowTimeline.jenis,
                                 "nama":rowTimeline.nama,
                                 "divisi":rowTimeline.divisi,
                                 "tanggalBuat":rowTimeline.tanggalBuat,

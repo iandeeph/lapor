@@ -68,6 +68,7 @@ router.post('/', function(req, res, next) {
                 req.session.username    = loginItem[0].username;
                 req.session.name        = loginItem[0].nama;
                 req.session.priv        = loginItem[0].division;
+                req.session.role        = loginItem[0].role;
                 //console.log(req.session.name );
                 res.writeHead(301,
                     {Location: '/admin'}

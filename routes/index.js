@@ -44,37 +44,82 @@ function replaceAll(str, find, replace) {
 }
 
 function capitalizeFirstLetter(str) {
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});;
+    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+}
+
+function addedSlaByDays(date,sla) {
+    var addSla;
+    var numDay = moment(date).format("E");
+    if (numDay == 5 || numDay == 6){
+        addSla = 2;
+    }else if (numDay == 7){
+        addSla = 1;
+    }else{
+        addSla = 0;
+    }
+    var added = (addSla + sla);
+    var dateAdd = moment().add(added,'d');
+
+    addSla = moment(dateAdd).format("YYYY-MM-DD HH:mm:ss");
+
+    return addSla;
+}
+
+function translateJenis(jenis, callback) {
+    var result;
+    laporanConn.query("select * from jenis where idjenis = '"+ jenis +"'")
+        .then(function(rowResult) {
+            if (!_.isEmpty(rowResult)){
+                result = jenis;
+            }else{
+                result = rowResult.nama;
+            }
+            //console.log(rowResult[0].nama);
+            callback(result);
+        });
+}
+
+function warnaAntrian(tanggal, dueDate){
+    var hMin1 = "";
+    var hMin2 = "";
+    var color = "";
+    if (dueDate != "0000-00-00 00:00:00"){
+        hMin1 = moment(dueDate).subtract(1,'d');
+        hMin2 = moment(dueDate).subtract(2,'d');
+    }else{
+        hMin1 = moment(tanggal).add(1,'d');
+        hMin2 = moment(tanggal).add(2,'d');
+    }
+    //console.log("tanggal = "+moment(tanggal));
+    //console.log("hMin1 = "+hMin1);
+    //console.log("hMin2 = "+hMin2);
+    if(moment() < hMin1){
+        color = "green darken-3";
+    }else if(moment() >= hMin1 && moment() < hMin2){
+        color = "orange"
+    }else if(moment() >= hMin2){
+        color = "red"
+    }else{
+        color = "grey"
+    }
+
+    return color;
 }
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
+    //console.log("tanggal = "+moment());
+    //console.log("moment(dueDate).subtract(1,'d') = "+moment().subtract(1,'d'));
+    //console.log("moment(tanggal).add(1,'d') = "+moment().add(1,'d'));
     var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
-    var tomorrow = moment().subtract(1,'d');
-    var afterTomorrow = moment().subtract(2,'d');
     var dateNowStart = moment().format("YYYY-MM-DD 00:00:00");
     var dateNowEnd = moment().format("YYYY-MM-DD 23:59:59");
     var layoutAntrian = [];
     var layoutPekerja = {};
-    var color = "";
 
-    function warnaAntrian(tanggal){
-        //console.log("tanggal = "+moment(tanggal));
-        //console.log("tomorrow = "+tomorrow);
-        if(moment(tanggal) <= afterTomorrow){
-            color = "red"
-        }else if(moment(tanggal) < tomorrow){
-            color = "orange"
-        }else{
-            color = "green darken-3"
-        }
-
-        return color;
-    }
-
-    laporanConn.query("select * from laporan order by noantrian")
+    laporanConn.query("select *, laporan.nama nama, laporan.status status, jenis.nama namaJenis, jenis.status statusJenis from laporan left join jenis on laporan.jenis = jenis.idjenis order by laporan.noantrian")
         .then(function(rowResult) {
-            //console.log(result);
+            //console.log(rowResult);
             var promiseAntrian = new Promise(function (resolve, reject) {
                 resolve(_.filter(rowResult, function(row){
                     return (row.status == "On Queue" && row.resolve == 'FALSE' && row.assign == 'open')
@@ -85,12 +130,13 @@ router.get('/', function(req, res, next) {
                     layoutAntrian[key] = {
                         "noAntrian" : result[key].noantrian,
                         "idLaporan" : result[key].idlaporan,
-                        "jenis": result[key].jenis,
+                        "jenis": (!_.isEmpty(result[key].namaJenis))?result[key].namaJenis:result[key].jenis,
                         "nama":result[key].nama,
                         "divisi":result[key].divisi,
                         "tanggalBuat":result[key].tanggalBuat,
+                        "tanggalBatas":result[key].tanggalBatas,
                         "detail":result[key].detail,
-                        "warna": warnaAntrian(result[key].tanggalBuat)};
+                        "warna": warnaAntrian(result[key].tanggalBuat, result[key].tanggalBatas)};
                 });
 
                 return Promise.all(layoutAntrian)
@@ -131,29 +177,31 @@ router.get('/', function(req, res, next) {
                                                         layoutPekerja['1'][rowPekerja.assign][rowPekerja.noantrian] = {
                                                             "noAntrian": rowPekerja.noantrian,
                                                             "idLaporan": rowPekerja.idlaporan,
-                                                            "jenis": rowPekerja.jenis,
+                                                            "jenis": (!_.isEmpty(rowPekerja.namaJenis))?rowPekerja.namaJenis:rowPekerja.jenis,
                                                             "nama": rowPekerja.nama,
                                                             "divisi": rowPekerja.divisi,
                                                             "tanggalBuat": rowPekerja.tanggalBuat,
+                                                            "tanggalBatas": rowPekerja.tanggalBatas,
                                                             "assign": rowPekerja.assign,
                                                             "status": rowPekerja.status,
                                                             "detail": rowPekerja.detail,
                                                             "catatan": rowPekerja.catatan,
-                                                            "warna": warnaAntrian(rowPekerja.tanggalBuat)
+                                                            "warna": warnaAntrian(rowPekerja.tanggalBuat,rowPekerja.tanggalBatas)
                                                         };
                                                     }else{
                                                         layoutPekerja['2'][rowPekerja.assign][rowPekerja.noantrian] = {
                                                             "noAntrian" : rowPekerja.noantrian,
                                                             "idLaporan" : rowPekerja.idlaporan,
-                                                            "jenis": rowPekerja.jenis,
+                                                            "jenis": (!_.isEmpty(rowPekerja.namaJenis))?rowPekerja.namaJenis:rowPekerja.jenis,
                                                             "nama":rowPekerja.nama,
                                                             "divisi":rowPekerja.divisi,
                                                             "tanggalBuat":rowPekerja.tanggalBuat,
+                                                            "tanggalBatas":rowPekerja.tanggalBatas,
                                                             "assign":rowPekerja.assign,
                                                             "status":rowPekerja.status,
                                                             "detail":rowPekerja.detail,
                                                             "catatan":rowPekerja.catatan,
-                                                            "warna": warnaAntrian(rowPekerja.tanggalBuat)};
+                                                            "warna": warnaAntrian(rowPekerja.tanggalBuat, rowPekerja.tanggalBatas)};
                                                     }
                                                     //console.log(warnaAntrian(rowPekerja.tanggalBuat));
                                                 }).then(function(b){
@@ -171,10 +219,11 @@ router.get('/', function(req, res, next) {
                                                                 return Promise.each(arrResult, function (rowTimeline) {
                                                                     layoutWorkflow[rowTimeline.doneDateFormated].push({
                                                                         "tanggalSelesai" : rowTimeline.tanggalSelesai,
-                                                                        "jenis": rowTimeline.jenis,
+                                                                        "jenis": (!_.isEmpty(rowTimeline.namaJenis))?rowTimeline.namaJenis:rowTimeline.jenis,
                                                                         "nama":rowTimeline.nama,
                                                                         "divisi":rowTimeline.divisi,
                                                                         "tanggalBuat":rowTimeline.tanggalBuat,
+                                                                        "tanggalBatas":rowTimeline.tanggalBatas,
                                                                         "assign":rowTimeline.assign,
                                                                         "status":rowTimeline.status,
                                                                         "idLaporan":rowTimeline.idlaporan,
@@ -203,7 +252,16 @@ router.get('/', function(req, res, next) {
 
 /* GET lapor page. */
 router.get('/lapor', function(req, res, next) {
-  res.render('lapor');
+    //var dateNow = moment().format("YYYY-MM-DD HH:mm:ss");
+    //console.log(addedSlaByDays(moment(), 3));
+    laporanConn.query("select * from jenis where status = 'main'")
+        .then(function(result) {
+            res.render('lapor',{
+                layout: 'main',
+                jenis: result
+            });
+
+        });
 });
 
 /* POST lapor page. */
@@ -217,6 +275,8 @@ router.post('/lapor', function(req, res, next) {
     var status = "";
     var noantrian = "";
     var queryString = "";
+    var lokasi = "";
+    var lantai = "";
 
     var postLapor = req.body.lapor || {};
 
@@ -259,7 +319,7 @@ router.post('/lapor', function(req, res, next) {
                 var num = 0;
 
                 return Promise.each(postDetail, function (rowDetail) {
-                    var rowDetailAkses = _.isNull(rowDetail.akses)?rowDetail.akses.toString() : "";
+                    var rowDetailAkses = !_.isNull(rowDetail.akses)?rowDetail.akses.toString() : "";
                     var detailTextIT  = "Nama Anak : "+ capitalizeFirstLetter(rowDetail.nama) +"\r\n" +
                         "Email Pribadi : "+ rowDetail.email.toLowerCase() +"\r\n" +
                         "Divisi Anak : "+ rowDetail.divisi +"\r\n" +
@@ -280,14 +340,14 @@ router.post('/lapor', function(req, res, next) {
                     //arrayDetail.push(JSON.stringify(rowDetail));
                     //arrayDetailGA.push(detailTextGA.toString());
 
-                    arrayQueryValue.push([(noantrian+(num*2)), nama, divisi, "Permintaan Perlengkapan Anak Baru", detailTextGA,status, dateNow]);
-                    arrayQueryValue.push([((noantrian+(num*2))+1), nama, divisi, "Permintaan Akses Login Anak Baru", detailTextIT,status, dateNow]);
+                    arrayQueryValue.push([(noantrian+(num*2)), nama, divisi, "Permintaan Perlengkapan Anak Baru", detailTextGA,status, dateNow, addedSlaByDays(moment(), 3)]);
+                    arrayQueryValue.push([((noantrian+(num*2))+1), nama, divisi, "Permintaan Akses Login Anak Baru", detailTextIT,status, dateNow, addedSlaByDays(moment(), 3)]);
 
                     num++;
                 }).then(function () {
                     //laporan: idlaporan, noantrian, nama, divisi, jenis, detail. status, resolve, tanggalBuat
                     queryString = "INSERT INTO db_portal_it.laporan " +
-                        "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat) " +
+                        "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat, tanggalBatas) " +
                         "VALUES ?";
 
                     //console.log(arrayQueryValue);
@@ -314,10 +374,10 @@ router.post('/lapor', function(req, res, next) {
                 noantrian = _.isNull(result[0].noantrian)? 1 : parseInt(result[0].noantrian) + 1;
 
                 //laporan: idlaporan, noantrian, nama, divisi, jenis, detail. status, resolve, tanggalBuat
-                arrayQueryValue.push([noantrian, nama, divisi, jenis, detail,status, dateNow]);
-                arrayQueryValue.push([(noantrian+1), nama, divisi, "Permohonan Hapus Akses (resign)", detail,status, dateNow]);
+                arrayQueryValue.push([noantrian, nama, divisi, "Permohonan Tarik Perangkat", detail,status, dateNow, addedSlaByDays(moment(), 2)]);
+                arrayQueryValue.push([(noantrian+1), nama, divisi, "Permohonan Hapus Akses (resign)", detail,status, dateNow, addedSlaByDays(moment(), 2)]);
                 queryString = "INSERT INTO db_portal_it.laporan " +
-                    "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat) " +
+                    "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat, tanggalBatas) " +
                     "VALUES ?";
 
                 //console.log(arrayQueryValue);
@@ -336,16 +396,44 @@ router.post('/lapor', function(req, res, next) {
                 nama = capitalizeFirstLetter(postLapor.nama);
                 divisi = postLapor.divisi;
                 jenis = postLapor.jenis;
-                var lokasi = postLapor.lokasi;
-                var lantai = postLapor.lantai;
+                lokasi = postLapor.lokasi;
+                lantai = postLapor.lantai;
                 detail = "Lokasi = "+lokasi+", lantai "+lantai+"\r\nDetail Permintaan = "+postLapor.detail;
                 status = "On Queue";
                 noantrian = _.isNull(result[0].noantrian)? 1 : parseInt(result[0].noantrian) + 1;
 
                 //laporan: idlaporan, noantrian, nama, divisi, jenis, detail. status, resolve, tanggalBuat
-                arrayQueryValue.push([noantrian, nama, divisi, jenis, detail,status, dateNow]);
+                arrayQueryValue.push([noantrian, nama, divisi, jenis, detail,status, dateNow, addedSlaByDays(moment(), 3)]);
                 queryString = "INSERT INTO db_portal_it.laporan " +
-                    "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat) " +
+                    "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat, tanggalBatas) " +
+                    "VALUES ?";
+
+                //console.log(arrayQueryValue);
+
+                return laporanConn.query(queryString, [arrayQueryValue])
+                    .then(function (queryResult) {
+                        res.render('lapor', {
+                            layout: 'main',
+                            message: "Permintaan berhasil dibuat.. Nomor Antrian anda "+ noantrian +" .. Silahkan lihat antrian anda di Halaman Home.."
+                        });
+                    }).catch(function (error) {
+                        //logs out the error
+                        console.error(error);
+                    });
+            }else if (req.body.laporsubmit == "lastOther"){
+                nama = capitalizeFirstLetter(postLapor.nama);
+                divisi = postLapor.divisi;
+                jenis = postLapor.jenis;
+                lokasi = postLapor.lokasi;
+                lantai = postLapor.lantai;
+                detail = "Lokasi = "+lokasi+", lantai "+lantai+"\r\nDetail Permintaan = "+postLapor.detail;
+                status = "On Queue";
+                noantrian = _.isNull(result[0].noantrian)? 1 : parseInt(result[0].noantrian) + 1;
+
+                //laporan: idlaporan, noantrian, nama, divisi, jenis, detail. status, resolve, tanggalBuat
+                arrayQueryValue.push([noantrian, nama, divisi, jenis, detail,status, dateNow, addedSlaByDays(moment(), 7)]);
+                queryString = "INSERT INTO db_portal_it.laporan " +
+                    "(noantrian, nama, divisi, jenis, detail, status, tanggalBuat, tanggalBatas) " +
                     "VALUES ?";
 
                 //console.log(arrayQueryValue);
