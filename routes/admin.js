@@ -105,13 +105,13 @@ router.get('/', function(req, res, next) {
                 resultPromise.then(function(antrianItem) {
                     //console.log(antrianItem);
                     Object.keys(antrianItem).forEach(function (key) {
-                        if((antrianItem[key].jenis == "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis == "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis == "Informasi Anak Resign") && privUser == "2"){
+                        if((antrianItem[key].namaJenis == "Permohonan Tarik Perangkat" || antrianItem[key].namaJenis == "Permintaan Perlengkapan Anak Baru") && privUser == "2"){
                             classification = "1";
-                        }else if((antrianItem[key].jenis == "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis == "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis == "Informasi Anak Resign") && privUser == "1"){
+                        }else if((antrianItem[key].namaJenis == "Permohonan Tarik Perangkat" || antrianItem[key].namaJenis == "Permintaan Perlengkapan Anak Baru") && privUser == "1"){
                             classification = "2";
-                        }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "2"){
+                        }else if((antrianItem[key].namaJenis != "Permohonan Tarik Perangkat" || antrianItem[key].namaJenis != "Permintaan Perlengkapan Anak Baru") && privUser == "2"){
                             classification = "2";
-                        }else if((antrianItem[key].jenis != "Permintaan Perlengkapan & Akses Login Anak Baru" || antrianItem[key].jenis != "Permintaan Perlengkapan Anak Baru" || antrianItem[key].jenis != "Informasi Anak Resign") && privUser == "1"){
+                        }else if((antrianItem[key].namaJenis != "Permohonan Tarik Perangkat" || antrianItem[key].namaJenis != "Permintaan Perlengkapan Anak Baru") && privUser == "1"){
                             classification = "1";
                         }
 
