@@ -86,7 +86,7 @@ router.get('/', function(req, res, next) {
         var jenisWarna = "";
 
         function warnaJenis(jenis) {
-            if(jenis == "Permintaan Perlengkapan Anak Baru" || jenis == "Informasi Anak Resign"){
+            if(jenis == "Permintaan Perlengkapan Anak Baru" || jenis == "Permohonan Tarik Perangkat"){
                 jenisWarna = ""
             }else{
                 jenisWarna = "grey lighten-2"
@@ -105,13 +105,13 @@ router.get('/', function(req, res, next) {
                 resultPromise.then(function(antrianItem) {
                     //console.log(antrianItem);
                     Object.keys(antrianItem).forEach(function (key) {
-                        if((antrianItem[key].namaJenis == "Permohonan Tarik Perangkat" || antrianItem[key].namaJenis == "Permintaan Perlengkapan Anak Baru") && privUser == "2"){
+                        if((antrianItem[key].jenis == "Permohonan Tarik Perangkat" || antrianItem[key].jenis == "Permintaan Perlengkapan Anak Baru") && privUser == "2"){
                             classification = "1";
-                        }else if((antrianItem[key].namaJenis == "Permohonan Tarik Perangkat" || antrianItem[key].namaJenis == "Permintaan Perlengkapan Anak Baru") && privUser == "1"){
+                        }else if((antrianItem[key].jenis == "Permohonan Tarik Perangkat" || antrianItem[key].jenis == "Permintaan Perlengkapan Anak Baru") && privUser == "1"){
                             classification = "2";
-                        }else if((antrianItem[key].namaJenis != "Permohonan Tarik Perangkat" || antrianItem[key].namaJenis != "Permintaan Perlengkapan Anak Baru") && privUser == "2"){
+                        }else if((antrianItem[key].jenis != "Permohonan Tarik Perangkat" || antrianItem[key].jenis != "Permintaan Perlengkapan Anak Baru") && privUser == "2"){
                             classification = "2";
-                        }else if((antrianItem[key].namaJenis != "Permohonan Tarik Perangkat" || antrianItem[key].namaJenis != "Permintaan Perlengkapan Anak Baru") && privUser == "1"){
+                        }else if((antrianItem[key].jenis != "Permohonan Tarik Perangkat" || antrianItem[key].jenis != "Permintaan Perlengkapan Anak Baru") && privUser == "1"){
                             classification = "1";
                         }
 
