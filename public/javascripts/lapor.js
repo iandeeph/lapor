@@ -330,3 +330,17 @@ $(document).on('change', 'input[id^=checkDetail]', function() {
         $("#detailTable").addClass('hide');
     }
 });
+
+$(document).on('change', '[id^=privilegeUser]', function() {
+    var selectValue = $(this).val();
+    var parentId = $(this).closest('.input-field').attr('data-text');
+    //console.log(selectValue);
+    $('#hiddenPriv-'+parentId).val(selectValue);
+});
+
+$(document).on('change', '[id^=jobUser]', function() {
+    var selectValue = $(this).val();
+    var parentId = $(this).closest('.input-field').attr('data-text');
+    //console.log(selectValue);
+    $('#hiddenJob-'+parentId).val(selectValue);
+});

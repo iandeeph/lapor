@@ -1,6 +1,7 @@
 var moment          = require('moment');
 var _               = require('lodash');
 var Handlebars      = require('handlebars');
+var crypto          = require('crypto');
 
 exports.fullDate = function (date) {
     var parse = "";
@@ -98,6 +99,30 @@ exports.parsePrivilege = function(priv){
         parse = "Administrator";
     }else if (priv == '2') {
         parse = "User"
+    }else{
+        parse = "Error"
+    }
+    return parse;
+};
+
+exports.parsePrivilegeLapor = function(priv){
+    var parse = "";
+    if (priv == '1'){
+        parse = "Administrator";
+    }else if (priv == '0') {
+        parse = "Operator"
+    }else{
+        parse = "Error"
+    }
+    return parse;
+};
+
+exports.parseJabatan = function(division){
+    var parse = "";
+    if (division == '1'){
+        parse = "IT Support";
+    }else if (division == '2') {
+        parse = "General Affair"
     }else{
         parse = "Error"
     }
@@ -252,4 +277,14 @@ exports.isEmpty = function(value, options) {
     } else {
         return options.fn(this);
     }
+};
+
+exports.decrypt = function (password) {
+    //console.log(password);
+    var mykeydec = crypto.createDecipher('aes-128-cbc', 'Cermat123hebat');
+    var mystrdec = mykeydec.update(password, 'hex', 'utf8');
+    mystrdec += mykeydec.final('utf8');
+    //console.log(mystrdec);
+
+    return mystrdec;
 };

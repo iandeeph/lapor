@@ -46,7 +46,13 @@
     <ul id="left-menu" class="sidenav mt-64">
         <li><a href="/admin">Lihat Antrian</a></li>
         <li><a href="/admin/workflow">Time Line Pekerjaan</a></li>
-        <li><a href="/admin/report">Laporan Kerja</a></li>
+        {{#compare session.role "1" operator="=="}}
+            <li><a href="/admin/user">User Management</a></li>
+            <li><a href="/admin/report">Laporan Kerja</a></li>
+        {{/compare}}
+        {{#compare session.role "0" operator="=="}}
+            <li><a href="/admin/user">User Management</a></li>
+        {{/compare}}
         <li><a href="/admin/logout">Logout ({{session.name}})</a></li>
     </ul>
 </header>

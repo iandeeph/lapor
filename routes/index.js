@@ -44,7 +44,13 @@ function replaceAll(str, find, replace) {
 }
 
 function capitalizeFirstLetter(str) {
-    return str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    var words = "";
+    if (!_.isEmpty(str)){
+        words = str.replace(/\w\S*/g, function(txt){return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();});
+    }else{
+        words = "";
+    }
+    return words;
 }
 
 function addedSlaByDays(date,sla) {

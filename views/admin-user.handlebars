@@ -1,0 +1,240 @@
+{{#section 'title'}}
+    User Management - Portal IT Cermati
+{{/section}}
+<div class="row ml-30 mr-30">
+    <div class="container">
+        <div class="col s12 mt-20">
+            <span class="font-40">Daftar User</span>
+            {{#compare userPriv "1" operator="=="}}
+                <a class="modal-trigger btn-floating btn-large waves-effect waves-light green right mt-20" href="#modal-addUser"title="Tambah Entry"><i class="material-icons">add</i></a>
+            {{/compare}}
+            <!-- Modal Structure -->
+            <div id="modal-addUser" class="modal">
+                <form action="" method="post" class="col s12">
+                    <div class="modal-content">
+                        <h4>Tambah User</h4>
+                        <div class="divider"></div>
+                        <div class="row">
+                            <div class="col s12">
+                                <div class="row">
+                                    <div class="input-field col s12">
+                                        <input class="validate" id="namaUser" name="addUser[name]" type="text" required>
+                                        <label for="namaUser">Nama User</label>
+                                    </div>
+                                    <div class="input-field col s12 m6 l6">
+                                        <input class="validate" id="usernameUser" name="addUser[username]" type="text" required>
+                                        <label for="usernameUser">Username</label>
+                                    </div>
+                                    <div class="input-field col s12 m6 l6">
+                                        <input class="validate" id="passwordUser" name="addUser[password]" type="password" required>
+                                        <label for="passwordUser">Password</label>
+                                    </div>
+                                    <div class="input-field col s12 m6 l6">
+                                        <select id="jobUser" name="addUser[job]" required>
+                                            <option value="" disabled selected>Pilih Divisi</option>
+                                            <option value="1">IT Support</option>
+                                            <option value="2">General Affair</option>
+                                        </select>
+                                        <label for="jobUser">Divisi User</label>
+                                    </div>
+                                    <div class="input-field col s12 m6 l6">
+                                        <select id="privUser" name="addUser[privilege]" required>
+                                            <option value="" disabled selected>Pilih Privilege</option>
+                                            <option value="0">Operator</option>
+                                            <option value="1">Admin</option>
+                                        </select>
+                                        <label for="privUser">User Privilege</label>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <div class="col s12 mb-20 mr-30">
+                            <button name="userButton" value="addUser" class="waves-effect waves-green blue darken-3 btn">Submit</button>
+                            <a href="#!" class="modal-action modal-close waves-effect waves-teal btn-flat">Cancel</a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        <div class="col s12 mt-30 mb-20 home-table">
+            <!--<form action="" method="post" class="col s12">-->
+            <table class="bordered">
+                <thead>
+                <tr>
+                    <th>
+                        No
+                    </th>
+                    <th>
+                        Nama
+                    </th>
+                    <th>
+                        Username
+                    </th>
+                    <th>
+                        Divisi
+                    </th>
+                    <th>
+                        Privilege
+                    </th>
+                    <th>
+                        Action
+                    </th>
+                </tr>
+                </thead>
+                <tbody>
+                {{#each rowList}}
+                    <tr class="group">
+                        <td>
+                            {{numbyIndex @key}}
+                        </td>
+                        <td>
+                            <span>{{nama}}</span>
+                        </td>
+                        <td>
+                            <span>{{username}}</span>
+                        </td>
+                        <td>
+                            <span>{{parseJabatan division}}</span>
+                        </td>
+                        <td>
+                            <span>{{parsePrivilegeLapor role}}</span>
+                        </td>
+                        <td class="center-align">
+                            {{#compare userPriv "1" operator="=="}}
+                                <!-- Modal Trigger -->
+                                <a class="modal-trigger" href="#modal{{idadmin}}" title="Edit"><i class="material-icons" >mode_edit</i></a>
+                                <a class="modal-trigger red-text" href="#modalDelete{{idadmin}}" title="Hapus User"><i class="material-icons" >delete</i></a>
+                            {{else}}
+                                {{#compare userLogin username operator="=="}}
+                                    <!-- Modal Trigger -->
+                                    <a class="modal-trigger" href="#modal{{idadmin}}" title="Edit"><i class="material-icons" >mode_edit</i></a>
+                                {{/compare}}
+                            {{/compare}}
+                        </td>
+                        <!-- Modal Structure -->
+                        <div id="modal{{idadmin}}" class="modal">
+                            <form action="" method="post" class="col s12">
+                                <div class="modal-content">
+                                    <h4>Edit Detail User</h4>
+                                    <div class="divider"></div>
+                                    <div class="row">
+                                        <div class="col s12">
+                                            <div class="row">
+                                                <div class="input-field col s12" data-text="{{idadmin}}">
+                                                    <input class="validate" id="namaUser-{{idadmin}}" name="editUser[{{@key}}][name]" type="text" placeholder="Nama User" value="{{nama}}" required>
+                                                    <label for="namaUser-{{idadmin}}">Nama User</label>
+                                                </div>
+                                                <div class="input-field col s12 m6 l6" data-text="{{idadmin}}">
+                                                    <input class="validate" id="usernameUser-{{idadmin}}" name="editUser[{{@key}}][username]" type="text" placeholder="Username" value="{{username}}" required>
+                                                    <label for="usernameUser-{{idadmin}}">Username</label>
+                                                </div>
+                                                <div class="input-field col s12 m6 l6" data-text="{{idadmin}}">
+                                                    <input class="validate" id="passwordUser-{{idadmin}}" name="editUser[{{@key}}][password]" type="password" placeholder="Password" value="{{decrypt password}}" required>
+                                                    <label for="passwordUser">Password</label>
+                                                </div>
+                                                {{#compare userPriv "1" operator="=="}}
+                                                    <div class="input-field col s12 m6 l6" data-text="{{idadmin}}">
+                                                        <input id="hiddenJob-{{idadmin}}"  name="editUser[{{@key}}][job]" type="hidden" value="{{division}}">
+                                                        <select id="jobUser-{{idadmin}}" required>
+                                                            <option value="" disabled>Pilih Divisi</option>
+                                                            {{#compare division 1 operator="=="}}
+                                                                <option value="1" selected>IT Support</option>
+                                                                <option value="2">General Affair</option>
+                                                            {{else}}
+                                                                <option value="1">IT Support</option>
+                                                                <option value="2" selected>General Affair</option>
+                                                            {{/compare}}
+                                                        </select>
+                                                        <label for="jobUser-{{idadmin}}">Divisi User</label>
+                                                    </div>
+                                                    <div class="input-field col s12 m6 l6" data-text="{{idadmin}}">
+                                                        <input id="hiddenPriv-{{idadmin}}"  name="editUser[{{@key}}][privilege]" type="hidden" value="{{role}}">
+                                                        <select id="privilegeUser-{{idadmin}}" required>
+                                                            <option value="" disabled>Pilih Privilege</option>
+                                                            {{#compare role 0 operator="=="}}
+                                                                <option value="0" selected>Operator</option>
+                                                                <option value="1">Administrator</option>
+                                                            {{else}}
+                                                                <option value="0">Operator</option>
+                                                                <option value="1" selected>Administrator</option>
+                                                            {{/compare}}
+                                                        </select>
+                                                        <label for="privilegeUser-{{idadmin}}">User Privilege</label>
+                                                    </div>
+                                                {{else}}
+                                                    <div class="input-field col s12 m6 l6" data-text="{{idadmin}}">
+                                                        <input id="hiddenJob-{{idadmin}}"  name="editUser[{{@key}}][job]" type="hidden" value="{{division}}">
+                                                        <select class="disabled" id="jobUser-{{idadmin}}" disabled>
+                                                            <option value="" disabled>Pilih Divisi</option>
+                                                            {{#compare division 1 operator="=="}}
+                                                                <option value="1" selected>IT Support</option>
+                                                                <option value="2">General Affair</option>
+                                                            {{else}}
+                                                                <option value="1">IT Support</option>
+                                                                <option value="2" selected>General Affair</option>
+                                                            {{/compare}}
+                                                        </select>
+                                                        <label for="jobUser-{{idadmin}}">Divisi User</label>
+                                                    </div>
+                                                    <div class="input-field col s12 m6 l6" data-text="{{idadmin}}">
+                                                        <input id="hiddenPriv-{{idadmin}}"  name="editUser[{{@key}}][privilege]" type="hidden" value="{{role}}">
+                                                        <select class="disabled" id="privilegeUser-{{idadmin}}" disabled>
+                                                            <option value="" disabled>Pilih Privilege</option>
+                                                            {{#compare role 0 operator="=="}}
+                                                                <option value="0" selected>Operator</option>
+                                                                <option value="1">Administrator</option>
+                                                            {{else}}
+                                                                <option value="0">Operator</option>
+                                                                <option value="1" selected>Administrator</option>
+                                                            {{/compare}}
+                                                        </select>
+                                                        <label for="privilegeUser-{{idadmin}}">User Privilege</label>
+                                                    </div>
+                                                {{/compare}}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="col s12 mb-20 mr-30">
+                                        <button id="editButton-{{idadmin}}" name="editUser[{{@key}}][btnUpdate]" value="{{idadmin}}" class="waves-effect waves-green blue darken-3 btn">Submit</button>
+                                        <a href="#!" class="modal-action modal-close waves-effect waves-teal btn-flat">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <!-- Modal Structure -->
+                        <div id="modalDelete{{idadmin}}" class="modal">
+                            <form action="" method="post" class="col s12">
+                                <div class="modal-content">
+                                    <h4>Hapus User</h4>
+                                    <div class="divider"></div>
+                                    <div class="row">
+                                        <div class="col s12 mt-30">
+                                            <div class="row">
+                                                <span>Apakah anda yakin menghapus user ini ?</span><br>
+                                                <span>Nama  : {{name}}</span><br>
+                                                <span>Divisi : {{parseJabatan division}}</span>
+                                                <span>Privilege : {{parsePrivilegeLapor privilege}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <div class="col s12 mb-20 mr-30">
+                                        <button name="deleteUser[{{@key}}][btnDelete]" value="{{idadmin}}" class="waves-effect waves-green red darken-3 btn">Delete</button>
+                                        <a href="#!" class="modal-action modal-close waves-effect waves-teal btn-flat">Cancel</a>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </tr>
+                {{/each}}
+                </tbody>
+            </table>
+            <!--</form>-->
+        </div>
+    </div>
+</div>

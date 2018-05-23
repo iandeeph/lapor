@@ -49,12 +49,17 @@ router.get('/', function(req, res, next) {
 /* POST Login page. */
 router.post('/', function(req, res, next) {
     var postUsername = req.body.login_username;
-    var postPassword = crypto.createHash('md5').update(req.body.login_password).digest('hex');
+    var postPassword = req.body.login_password;
     //console.log(postPassword);
+    var mykey = crypto.createCipher('aes-128-cbc', 'Cermat123hebat');
+    var mystr = mykey.update(postPassword, 'utf8', 'hex');
+    mystr += mykey.final('hex');
+    //console.log(mystr);
+
     agenPulsaConn.query('SELECT * FROM admin').then(function(users) {
         //console.log(users);
         var loginPromise = new Promise(function (resolve, reject) {
-            resolve(_.filter(users, {'username' : postUsername , 'password' : postPassword}));
+            resolve(_.filter(users, {'username' : postUsername , 'password' : mystr}));
         });
 
         loginPromise.then(function(loginItem) {
