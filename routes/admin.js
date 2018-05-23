@@ -774,7 +774,7 @@ router.post('/user', function(req, res) {
             //console.log("post delete user");
             mainBody = req.body.deleteUser;
             return Promise.each(mainBody, function (rowBody) {
-                queryString = "DELETE FROM admin WHERE idadmin = '"+ rowBody.btnDelete +"'";
+                queryString = "UPDATE admin SET status = 'Deactive' WHERE idadmin = '"+ rowBody.btnDelete +"'";
             }).then(function (queryResult) {
                 return laporanConn.query(queryString)
                     .then(function (queryResult) {

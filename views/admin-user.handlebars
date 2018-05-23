@@ -79,6 +79,9 @@
                         Privilege
                     </th>
                     <th>
+                        Status
+                    </th>
+                    <th>
                         Action
                     </th>
                 </tr>
@@ -100,6 +103,9 @@
                         </td>
                         <td>
                             <span>{{parsePrivilegeLapor role}}</span>
+                        </td>
+                        <td>
+                            <span>{{status}}</span>
                         </td>
                         <td class="center-align">
                             {{#compare userPriv "1" operator="=="}}
@@ -217,7 +223,7 @@
                                                 <span>Apakah anda yakin menghapus user ini ?</span><br>
                                                 <span>Nama  : {{name}}</span><br>
                                                 <span>Divisi : {{parseJabatan division}}</span>
-                                                <span>Privilege : {{parsePrivilegeLapor privilege}}</span>
+                                                <span>Privilege : {{parsePrivilegeLapor role}}</span>
                                             </div>
                                         </div>
                                     </div>
