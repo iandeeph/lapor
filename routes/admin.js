@@ -498,45 +498,70 @@ router.post('/report', function(req, res) {
     //    console.log("Not Logged");
     //    res.redirect('/portal-auth');
     //}else {
-        var loginUser = req.session.name;
-        var postReport = req.body.report;
-        var postUser = req.body.report || {};
-        var arrPostUser = _.toArray(postUser.user) || {};
-        var postStartDate = moment(new Date(req.body.report.start)).format("YYYY-MM-DD 00:00:00") || {};
-        var postEndDate = moment(new Date(req.body.report.end)).format("YYYY-MM-DD 23:59:59") || {};
-        var filterDate = {
-            'start': moment(new Date(postStartDate)).format("DD MMMM, YYYY"),
-            'end': moment(new Date(postEndDate)).format("DD MMMM, YYYY")
-        };
-        var layoutTemplate = {};
-        var assignQuery = [];
-        //console.log(postUser);
-        return Promise.each(arrPostUser, function (user){
-            assignQuery.push("assign = '"+ user +"'");
-        }).then(function(){
+    var loginUser = req.session.name;
+    var postReport = req.body.report;
+    var postUser = req.body.report || {};
+    var arrPostUser = _.toArray(postUser.user) || {};
+    var postStartDate = moment(new Date(req.body.report.start)).format("YYYY-MM-DD 00:00:00") || {};
+    var postEndDate = moment(new Date(req.body.report.end)).format("YYYY-MM-DD 23:59:59") || {};
+    var filterDate = {
+        'start': moment(new Date(postStartDate)).format("DD MMMM, YYYY"),
+        'end': moment(new Date(postEndDate)).format("DD MMMM, YYYY")
+    };
+    var layoutTemplate = {};
+    var assignQuery = [];
+    var timelineQry= "";
+    //console.log(postUser);
+    return Promise.each(arrPostUser, function (user){
+        assignQuery.push("assign = '"+ user +"'");
+    }).then(function(){
         var assignQueryTxt = assignQuery.toString().replace(/,/gi," OR ");
-        var timelineQry= "SELECT *, " +
-            "laporan.nama nama, " +
-            "admin.nama namaAdmin, " +
-            "laporan.status status, " +
-            "jenis.nama namaJenis, " +
-            "jenis.status statusJenis, " +
-            "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
-            "FROM " +
-            "laporan " +
-            "left join " +
-            "admin " +
-            "on laporan.assign = admin.nama " +
-            "left join " +
-            "jenis " +
-            "on laporan.jenis = jenis.idjenis " +
-            "WHERE " +
-            "("+assignQueryTxt+") AND " +
-            "laporan.status = 'Done' AND " +
-            "resolve ='TRUE' AND " +
-            "(tanggalAssign between '"+ postStartDate +"' AND '"+ postEndDate +"' OR " +
-            "tanggalSelesai between '"+ postStartDate +"' AND '"+ postEndDate +"') " +
-            "ORDER BY assign ASC";
+        if (!_.isEmpty(assignQueryTxt)){
+            timelineQry= "SELECT *, " +
+                "laporan.nama nama, " +
+                "admin.nama namaAdmin, " +
+                "laporan.status status, " +
+                "jenis.nama namaJenis, " +
+                "jenis.status statusJenis, " +
+                "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
+                "FROM " +
+                "laporan " +
+                "left join " +
+                "admin " +
+                "on laporan.assign = admin.nama " +
+                "left join " +
+                "jenis " +
+                "on laporan.jenis = jenis.idjenis " +
+                "WHERE " +
+                "("+assignQueryTxt+") AND " +
+                "laporan.status = 'Done' AND " +
+                "resolve ='TRUE' AND " +
+                "(tanggalAssign between '"+ postStartDate +"' AND '"+ postEndDate +"' OR " +
+                "tanggalSelesai between '"+ postStartDate +"' AND '"+ postEndDate +"') " +
+                "ORDER BY assign ASC";
+        }else{
+            timelineQry= "SELECT *, " +
+                "laporan.nama nama, " +
+                "admin.nama namaAdmin, " +
+                "laporan.status status, " +
+                "jenis.nama namaJenis, " +
+                "jenis.status statusJenis, " +
+                "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
+                "FROM " +
+                "laporan " +
+                "left join " +
+                "admin " +
+                "on laporan.assign = admin.nama " +
+                "left join " +
+                "jenis " +
+                "on laporan.jenis = jenis.idjenis " +
+                "WHERE " +
+                "laporan.status = 'Done' AND " +
+                "resolve ='TRUE' AND " +
+                "(tanggalAssign between '"+ postStartDate +"' AND '"+ postEndDate +"' OR " +
+                "tanggalSelesai between '"+ postStartDate +"' AND '"+ postEndDate +"') " +
+                "ORDER BY assign ASC";
+        }
         //console.log(timelineQry);
         laporanConn.query(timelineQry)
             .then(function(timelineResQry) {
@@ -625,7 +650,7 @@ router.post('/report', function(req, res) {
                                         'selected' : ''});
                                     return Promise.each(arrGrpAssign, function (rowAssign){
                                         assignSelect[rowAssign.assign] = [];
-                                        }).then(function(){
+                                    }).then(function(){
                                         return Promise.each(arrGrpAssign, function (rowAssign2){
                                             var filterUser = _.indexOf(postUser.user, rowAssign2.assign);
                                             //console.log(_.indexOf(postUser.user, rowAssign2.assign));
@@ -653,7 +678,7 @@ router.post('/report', function(req, res) {
                                             });
                                         });
                                     });
-                            });
+                                });
                         });
                     });
                 });
@@ -661,7 +686,7 @@ router.post('/report', function(req, res) {
                 //logs out the error
                 console.error(error);
             });
-        });
+    });
     //}
 });
 
