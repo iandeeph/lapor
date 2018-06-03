@@ -612,7 +612,7 @@ router.post('/report', function(req, res) {
                                 }
                             }
                         }).then(function(){
-                            var timelineQry= "SELECT assign FROM laporan left join admin on laporan.assign = admin.nama WHERE status = 'Done' AND resolve ='TRUE' GROUP BY assign ORDER BY assign ASC";
+                            var timelineQry= "SELECT assign FROM laporan left join admin on laporan.assign = admin.nama WHERE laporan.status = 'Done' AND resolve ='TRUE' GROUP BY assign ORDER BY assign ASC";
                             laporanConn.query(timelineQry)
                                 .then(function(timelineResQry) {
                                     var arrGrpAssign = _.toArray(timelineResQry);
