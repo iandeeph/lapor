@@ -35,7 +35,7 @@
                                 <div class="row">
                                     <div class="col s12 mb-30">
                                         <div class="input-field col s12 m5 l5">
-                                            <select name="report[user]" multiple>
+                                            <select id="filterUser" name="report[user]" multiple>
                                                 <!--<option class="disabled" disabled selected>Pilih User</option>-->
                                                 {{#each assignSelect}}
                                                     {{#each this}}
@@ -43,7 +43,7 @@
                                                     {{/each}}
                                                 {{/each}}
                                             </select>
-                                            <label>Pilih User</label>
+                                            <label for="filterUser">Pilih User</label>
                                         </div>
                                         <div class="col s12 m7 l7">
                                             <div class="col s12 m5 l5">

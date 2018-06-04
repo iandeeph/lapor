@@ -494,200 +494,210 @@ router.get('/report', function(req, res) {
 
 /* POST report page. */
 router.post('/report', function(req, res) {
-    //if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
-    //    console.log("Not Logged");
-    //    res.redirect('/portal-auth');
-    //}else {
-    var loginUser = req.session.name;
-    var postReport = req.body.report;
-    var postUser = req.body.report || {};
-    var arrPostUser = _.toArray(postUser.user) || {};
-    var postStartDate = moment(new Date(req.body.report.start)).format("YYYY-MM-DD 00:00:00") || {};
-    var postEndDate = moment(new Date(req.body.report.end)).format("YYYY-MM-DD 23:59:59") || {};
-    var filterDate = {
-        'start': moment(new Date(postStartDate)).format("DD MMMM, YYYY"),
-        'end': moment(new Date(postEndDate)).format("DD MMMM, YYYY")
-    };
-    var layoutTemplate = {};
-    var assignQuery = [];
-    var timelineQry= "";
-    //console.log(postUser);
-    return Promise.each(arrPostUser, function (user){
-        assignQuery.push("assign = '"+ user +"'");
-    }).then(function(){
-        var assignQueryTxt = assignQuery.toString().replace(/,/gi," OR ");
-        if (!_.isEmpty(assignQueryTxt)){
-            timelineQry= "SELECT *, " +
-                "laporan.nama nama, " +
-                "admin.nama namaAdmin, " +
-                "laporan.status status, " +
-                "jenis.nama namaJenis, " +
-                "jenis.status statusJenis, " +
-                "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
-                "FROM " +
-                "laporan " +
-                "left join " +
-                "admin " +
-                "on laporan.assign = admin.nama " +
-                "left join " +
-                "jenis " +
-                "on laporan.jenis = jenis.idjenis " +
-                "WHERE " +
-                "("+assignQueryTxt+") AND " +
-                "laporan.status = 'Done' AND " +
-                "resolve ='TRUE' AND " +
-                "(tanggalAssign between '"+ postStartDate +"' AND '"+ postEndDate +"' OR " +
-                "tanggalSelesai between '"+ postStartDate +"' AND '"+ postEndDate +"') " +
-                "ORDER BY assign ASC";
-        }else{
-            timelineQry= "SELECT *, " +
-                "laporan.nama nama, " +
-                "admin.nama namaAdmin, " +
-                "laporan.status status, " +
-                "jenis.nama namaJenis, " +
-                "jenis.status statusJenis, " +
-                "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
-                "FROM " +
-                "laporan " +
-                "left join " +
-                "admin " +
-                "on laporan.assign = admin.nama " +
-                "left join " +
-                "jenis " +
-                "on laporan.jenis = jenis.idjenis " +
-                "WHERE " +
-                "laporan.status = 'Done' AND " +
-                "resolve ='TRUE' AND " +
-                "(tanggalAssign between '"+ postStartDate +"' AND '"+ postEndDate +"' OR " +
-                "tanggalSelesai between '"+ postStartDate +"' AND '"+ postEndDate +"') " +
-                "ORDER BY assign ASC";
-        }
-        //console.log(timelineQry);
-        laporanConn.query(timelineQry)
-            .then(function(timelineResQry) {
-                var groupedAssign = _.groupBy(timelineResQry, 'assign');
-                var groupedJenis = _.groupBy(timelineResQry, 'jenis');
-                var arrGrpAssign = _.toArray(groupedAssign);
-                var arrGrpJenis = _.toArray(groupedJenis);
-                var arrResult = _.toArray(timelineResQry);
-                var templateLaporan = [];
-                //console.log(arrGrpAssign);
-                return Promise.each(arrGrpAssign, function (rowName){
-                    //console.log(rowName);
-                    layoutTemplate[rowName[0].assign] = {};
-                }).then(function(){
-                    return Promise.each(arrResult, function (rowJenis) {
-                        //console.log(rowJenis[0].jenis);
-                        layoutTemplate[rowJenis.assign][rowJenis.jenis] = [];
-                    }).then(function(){
-                        //console.log(layoutTemplate);
-                        return Promise.each(arrResult, function (rowTimeline) {
-                            //console.log(humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf()));
-                            layoutTemplate[rowTimeline.assign][rowTimeline.jenis].push({
-                                "point" : 1,
-                                "tanggalSelesai" : rowTimeline.tanggalSelesai,
-                                "totalWaktuTiket" : moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf(),
-                                "totalWaktuPengerjaan" : moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalAssign).valueOf(),
-                                "totalWaktuTiketFormated" : humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf(),{
-                                    language : 'id',
-                                    round: true,
-                                    units: ['d', 'h', 'm']
+    if(_.isUndefined(req.session.login) || req.session.login != 'loged'){
+        console.log("Not Logged");
+        res.redirect('/portal-auth');
+    }else {
+        var loginUser = req.session.name;
+        var postReport = req.body.report;
+        var postUser = req.body.report.user || {};
+        var arrPostUser = "";
+        var postStartDate = moment(new Date(req.body.report.start)).format("YYYY-MM-DD 00:00:00") || {};
+        var postEndDate = moment(new Date(req.body.report.end)).format("YYYY-MM-DD 23:59:59") || {};
+        var filterDate = {
+            'start': moment(new Date(postStartDate)).format("DD MMMM, YYYY"),
+            'end': moment(new Date(postEndDate)).format("DD MMMM, YYYY")
+        };
+        var layoutTemplate = {};
+        var assignQuery = [];
+        var timelineQry= "";
+        console.log(!_.isEmpty(postUser));
+        var promise = new Promise(function(resolve, reject) {
+            if(!_.isEmpty(postUser)) {
+                if (_.isArray(postUser)) {
+                    arrPostUser = postUser;
+                } else {
+                    arrPostUser = [postUser];
+                }
+                arrPostUser.forEach(function (user) {
+                    assignQuery.push("assign = '" + user + "'");
+                });
+                var assignQueryTxt = assignQuery.toString().replace(/,/gi, " OR ");
+                timelineQry = "SELECT *, " +
+                    "laporan.nama nama, " +
+                    "admin.nama namaAdmin, " +
+                    "laporan.status status, " +
+                    "jenis.nama namaJenis, " +
+                    "jenis.status statusJenis, " +
+                    "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
+                    "FROM " +
+                    "laporan " +
+                    "left join " +
+                    "admin " +
+                    "on laporan.assign = admin.nama " +
+                    "left join " +
+                    "jenis " +
+                    "on laporan.jenis = jenis.idjenis " +
+                    "WHERE " +
+                    "(" + assignQueryTxt + ") AND " +
+                    "laporan.status = 'Done' AND " +
+                    "resolve ='TRUE' AND " +
+                    "(tanggalAssign between '" + postStartDate + "' AND '" + postEndDate + "' OR " +
+                    "tanggalSelesai between '" + postStartDate + "' AND '" + postEndDate + "') " +
+                    "ORDER BY assign ASC";
+            }else{
+                timelineQry = "SELECT *, " +
+                    "laporan.nama nama, " +
+                    "admin.nama namaAdmin, " +
+                    "laporan.status status, " +
+                    "jenis.nama namaJenis, " +
+                    "jenis.status statusJenis, " +
+                    "DATE_FORMAT(tanggalSelesai, '%e %b %Y') doneDateFormated " +
+                    "FROM " +
+                    "laporan " +
+                    "left join " +
+                    "admin " +
+                    "on laporan.assign = admin.nama " +
+                    "left join " +
+                    "jenis " +
+                    "on laporan.jenis = jenis.idjenis " +
+                    "WHERE " +
+                    "laporan.status = 'Done' AND " +
+                    "resolve ='TRUE' AND " +
+                    "(tanggalAssign between '" + postStartDate + "' AND '" + postEndDate + "' OR " +
+                    "tanggalSelesai between '" + postStartDate + "' AND '" + postEndDate + "') " +
+                    "ORDER BY assign ASC";
+            }
+            resolve(timelineQry);
+        });
 
-                                }),
-                                "totalWaktuPengerjaanFormated" : humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalAssign).valueOf(),{
-                                    language : 'id',
-                                    round: true,
-                                    units: ['d', 'h', 'm']
-                                }),
-                                "jenis": (!_.isEmpty(rowTimeline.namaJenis))?rowTimeline.namaJenis:rowTimeline.jenis,
-                                "nama":rowTimeline.nama,
-                                "divisi":rowTimeline.divisi,
-                                "tanggalBuat":rowTimeline.tanggalBuat,
-                                "tanggalAssign":rowTimeline.tanggalAssign,
-                                "assign":rowTimeline.assign,
-                                "division":rowTimeline.division,
-                                "status":rowTimeline.status,
-                                "idLaporan":rowTimeline.idlaporan,
-                                "detail":rowTimeline.detail
-                            });
+        Promise.all([promise]).then(function(values) {
+            //console.log(timelineQry);
+            laporanConn.query(timelineQry)
+                .then(function(timelineResQry) {
+                    var groupedAssign = _.groupBy(timelineResQry, 'assign');
+                    var groupedJenis = _.groupBy(timelineResQry, 'jenis');
+                    var arrGrpAssign = _.toArray(groupedAssign);
+                    var arrGrpJenis = _.toArray(groupedJenis);
+                    var arrResult = _.toArray(timelineResQry);
+                    var templateLaporan = [];
+                    //console.log(arrGrpAssign);
+                    return Promise.each(arrGrpAssign, function (rowName){
+                        //console.log(rowName);
+                        layoutTemplate[rowName[0].assign] = {};
+                    }).then(function(){
+                        return Promise.each(arrResult, function (rowJenis) {
+                            //console.log(rowJenis[0].jenis);
+                            layoutTemplate[rowJenis.assign][rowJenis.jenis] = [];
                         }).then(function(){
-                            for (var assign in layoutTemplate) {
-                                if (layoutTemplate.hasOwnProperty(assign)) {
-                                    //console.log(assign + " -> " + layoutTemplate[assign]);
-                                    for (var item in layoutTemplate[assign]) {
-                                        if (layoutTemplate[assign].hasOwnProperty(item)) {
-                                            //console.log(_.sumBy(layoutTemplate[assign][item], "totalWaktuTiket"));
-                                            templateLaporan.push({
-                                                "assign":assign,
-                                                "jenis":item,
-                                                "jumlah":_.sumBy(layoutTemplate[assign][item], "point"),
-                                                "avgTimeTicket":humanizeDuration(_.sumBy(layoutTemplate[assign][item], "totalWaktuTiket")/_.sumBy(layoutTemplate[assign][item], "point"),{
-                                                    language : 'id',
-                                                    round: true,
-                                                    units: ['d', 'h', 'm']
-                                                }),
-                                                "avgTimeDone":humanizeDuration(_.sumBy(layoutTemplate[assign][item], "totalWaktuPengerjaan")/_.sumBy(layoutTemplate[assign][item], "point"),{
-                                                    language : 'id',
-                                                    round: true,
-                                                    units: ['d', 'h', 'm']
+                            //console.log(layoutTemplate);
+                            return Promise.each(arrResult, function (rowTimeline) {
+                                //console.log(humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf()));
+                                layoutTemplate[rowTimeline.assign][rowTimeline.jenis].push({
+                                    "point" : 1,
+                                    "tanggalSelesai" : rowTimeline.tanggalSelesai,
+                                    "totalWaktuTiket" : moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf(),
+                                    "totalWaktuPengerjaan" : moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalAssign).valueOf(),
+                                    "totalWaktuTiketFormated" : humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalBuat).valueOf(),{
+                                        language : 'id',
+                                        round: true,
+                                        units: ['d', 'h', 'm']
+
+                                    }),
+                                    "totalWaktuPengerjaanFormated" : humanizeDuration(moment(rowTimeline.tanggalSelesai).valueOf() - moment(rowTimeline.tanggalAssign).valueOf(),{
+                                        language : 'id',
+                                        round: true,
+                                        units: ['d', 'h', 'm']
+                                    }),
+                                    "jenis": (!_.isEmpty(rowTimeline.namaJenis))?rowTimeline.namaJenis:rowTimeline.jenis,
+                                    "nama":rowTimeline.nama,
+                                    "divisi":rowTimeline.divisi,
+                                    "tanggalBuat":rowTimeline.tanggalBuat,
+                                    "tanggalAssign":rowTimeline.tanggalAssign,
+                                    "assign":rowTimeline.assign,
+                                    "division":rowTimeline.division,
+                                    "status":rowTimeline.status,
+                                    "idLaporan":rowTimeline.idlaporan,
+                                    "detail":rowTimeline.detail
+                                });
+                            }).then(function(){
+                                for (var assign in layoutTemplate) {
+                                    if (layoutTemplate.hasOwnProperty(assign)) {
+                                        //console.log(assign + " -> " + layoutTemplate[assign]);
+                                        for (var item in layoutTemplate[assign]) {
+                                            if (layoutTemplate[assign].hasOwnProperty(item)) {
+                                                //console.log(_.sumBy(layoutTemplate[assign][item], "totalWaktuTiket"));
+                                                templateLaporan.push({
+                                                    "assign":assign,
+                                                    "jenis":item,
+                                                    "jumlah":_.sumBy(layoutTemplate[assign][item], "point"),
+                                                    "avgTimeTicket":humanizeDuration(_.sumBy(layoutTemplate[assign][item], "totalWaktuTiket")/_.sumBy(layoutTemplate[assign][item], "point"),{
+                                                        language : 'id',
+                                                        round: true,
+                                                        units: ['d', 'h', 'm']
+                                                    }),
+                                                    "avgTimeDone":humanizeDuration(_.sumBy(layoutTemplate[assign][item], "totalWaktuPengerjaan")/_.sumBy(layoutTemplate[assign][item], "point"),{
+                                                        language : 'id',
+                                                        round: true,
+                                                        units: ['d', 'h', 'm']
+                                                    })
                                                 })
-                                            })
+                                            }
                                         }
                                     }
                                 }
-                            }
-                        }).then(function(){
-                            var timelineQry= "SELECT assign FROM laporan left join admin on laporan.assign = admin.nama WHERE laporan.status = 'Done' AND resolve ='TRUE' GROUP BY assign ORDER BY assign ASC";
-                            laporanConn.query(timelineQry)
-                                .then(function(timelineResQry) {
-                                    var arrGrpAssign = _.toArray(timelineResQry);
-                                    var assignSelect = {};
-                                    assignSelect["Pilih User"] = [];
+                            }).then(function(){
+                                var timelineQry= "SELECT assign FROM laporan left join admin on laporan.assign = admin.nama WHERE laporan.status = 'Done' AND resolve ='TRUE' GROUP BY assign ORDER BY assign ASC";
+                                laporanConn.query(timelineQry)
+                                    .then(function(timelineResQry) {
+                                        var arrGrpAssign = _.toArray(timelineResQry);
+                                        var assignSelect = {};
+                                        assignSelect["Pilih User"] = [];
 
-                                    assignSelect["Pilih User"].push({
-                                        'assign' : "Pilih User",
-                                        'disabled' : "disabled",
-                                        'selected' : ''});
-                                    return Promise.each(arrGrpAssign, function (rowAssign){
-                                        assignSelect[rowAssign.assign] = [];
-                                    }).then(function(){
-                                        return Promise.each(arrGrpAssign, function (rowAssign2){
-                                            var filterUser = _.indexOf(postUser.user, rowAssign2.assign);
-                                            //console.log(_.indexOf(postUser.user, rowAssign2.assign));
-                                            if(filterUser >=0){
-                                                assignSelect[rowAssign2.assign].push({
-                                                    'assign' : rowAssign2.assign,
-                                                    'disabled' : "",
-                                                    'selected' : 'selected'});
-                                            }else{
-                                                assignSelect[rowAssign2.assign].push({
-                                                    'assign' : rowAssign2.assign,
-                                                    'disabled' : "",
-                                                    'selected' : ''});
-                                            }
+                                        assignSelect["Pilih User"].push({
+                                            'assign' : "Pilih User",
+                                            'disabled' : "disabled",
+                                            'selected' : ''});
+                                        return Promise.each(arrGrpAssign, function (rowAssign){
+                                            assignSelect[rowAssign.assign] = [];
                                         }).then(function(){
-                                            //console.log(assignSelect);
-                                            res.render('admin-report', {
-                                                layout: "admin",
-                                                layoutTemplate: templateLaporan,
-                                                groupedAssign: groupedAssign,
-                                                postReport: postReport,
-                                                filterDate: filterDate,
-                                                assignSelect: assignSelect,
-                                                layoutTemplateDetail: layoutTemplate
+                                            return Promise.each(arrGrpAssign, function (rowAssign2){
+                                                var filterUser = _.indexOf(postUser, rowAssign2.assign);
+                                                //console.log(_.indexOf(postUser.user, rowAssign2.assign));
+                                                if(filterUser >=0){
+                                                    assignSelect[rowAssign2.assign].push({
+                                                        'assign' : rowAssign2.assign,
+                                                        'disabled' : "",
+                                                        'selected' : 'selected'});
+                                                }else{
+                                                    assignSelect[rowAssign2.assign].push({
+                                                        'assign' : rowAssign2.assign,
+                                                        'disabled' : "",
+                                                        'selected' : ''});
+                                                }
+                                            }).then(function(){
+                                                //console.log(assignSelect);
+                                                res.render('admin-report', {
+                                                    layout: "admin",
+                                                    layoutTemplate: templateLaporan,
+                                                    groupedAssign: groupedAssign,
+                                                    postReport: postReport,
+                                                    filterDate: filterDate,
+                                                    assignSelect: assignSelect,
+                                                    layoutTemplateDetail: layoutTemplate
+                                                });
                                             });
                                         });
                                     });
-                                });
+                            });
                         });
                     });
+                }).catch(function (error) {
+                    //logs out the error
+                    console.error(error);
                 });
-            }).catch(function (error) {
-                //logs out the error
-                console.error(error);
-            });
-    });
-    //}
+        });
+    }
 });
 
 /* GET user page. */
